@@ -38,6 +38,28 @@ WHITE='\033[97m'
 BOLD='\033[1m'
 RESET='\033[0m'
 
+# ── Helper Functions ─────────────────────────────────────────────────────────
+
+get_time_ms() {
+    local ts
+    # GNU date supports %s%3N
+    ts=$(date +%s%3N 2>/dev/null || true)
+    if [[ "$ts" =~ ^[0-9]{13,}$ ]]; then
+        echo "$ts"
+        return
+    fi
+    # macOS / BSD fallback via perl (standard on macOS)
+    if command -v perl >/dev/null 2>&1; then
+        perl -MTime::HiRes=time -e 'printf "%.0f\n", time*1000' 2>/dev/null && return
+    fi
+    # Fallback via python3
+    if command -v python3 >/dev/null 2>&1; then
+        python3 -c 'import time; print(int(time.time()*1000))' 2>/dev/null && return
+    fi
+    # Last-resort fallback: epoch seconds
+    date +%s
+}
+
 # ── Arguments ────────────────────────────────────────────────────────────────
 
 SCAN_PATH="."
@@ -70,6 +92,11 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+if [[ ! -d "$SCAN_PATH" ]]; then
+    echo -e "  ${RED}Error: Directory does not exist:${RESET} ${SCAN_PATH}" >&2
+    exit 1
+fi
+
 SCAN_PATH="$(cd "$SCAN_PATH" && pwd)"
 
 # ── Header ───────────────────────────────────────────────────────────────────
@@ -87,17 +114,22 @@ echo ""
 
 # ── Timer Start ──────────────────────────────────────────────────────────────
 
-START_MS=$(date +%s%3N 2>/dev/null || date +%s)
+START_MS=$(get_time_ms)
 
 # ── Find repos ───────────────────────────────────────────────────────────────
 
-mapfile -t GIT_DIRS < <(find "$SCAN_PATH" -type d -name ".git" 2>/dev/null | sort)
+GIT_DIRS=()
+while IFS= read -r dir; do
+    [[ -n "$dir" ]] && GIT_DIRS+=("$dir")
+done < <(find "$SCAN_PATH" -name ".git" -prune 2>/dev/null | sort)
 
 if [[ ${#GIT_DIRS[@]} -eq 0 ]]; then
     echo -e "  ${YELLOW}⚠  No Git repositories found under ${SCAN_PATH}${RESET}"
-    echo ""
-    echo -n "  Press Enter to close..."
-    read -r _ || true
+    if [[ -t 0 ]]; then
+        echo ""
+        echo -n "  Press Enter to close..."
+        read -r _ || true
+    fi
     exit 0
 fi
 
@@ -148,8 +180,7 @@ for git_dir in "${GIT_DIRS[@]}"; do
     upstream=$(git rev-parse --abbrev-ref "@{upstream}" 2>/dev/null || true)
     if [[ -n "$upstream" ]]; then
         ab=$(git rev-list --left-right --count "HEAD...$upstream" 2>/dev/null || echo "0 0")
-        ahead=$(echo "$ab" | awk '{print $1}')
-        behind=$(echo "$ab" | awk '{print $2}')
+        read -r ahead behind <<< "$ab"
     fi
     ahead=${ahead:-0}
     behind=${behind:-0}
@@ -181,7 +212,7 @@ printf "\r%100s\r" "" >&2
 
 # ── Timer End & Format ────────────────────────────────────────────────────────
 
-END_MS=$(date +%s%3N 2>/dev/null || date +%s)
+END_MS=$(get_time_ms)
 diff_val=$(( END_MS - START_MS ))
 
 if [[ ${#START_MS} -gt 10 && ${#END_MS} -gt 10 ]]; then
@@ -233,7 +264,8 @@ displayed=0
 printf "${CYAN}  %-${max_name}s  %-${max_branch}s  %5s  %5s  %5s  %5s  %5s  %s${RESET}\n" \
     "Repository" "Branch" "Mod" "Unt" "Push" "Pull" "Stash" "Status"
 sep_len=$((max_name + max_branch + 46))
-printf "  ${GRAY}%${sep_len}s${RESET}\n" "" | tr ' ' '─'
+sep_line=$(printf "%*s" "$sep_len" "" | tr ' ' '─')
+printf "  ${GRAY}%s${RESET}\n" "$sep_line"
 
 # Sort: dirty first, then clean
 for pass in dirty clean; do
