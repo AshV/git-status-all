@@ -1,4 +1,4 @@
-# 🔍 git status --all — Multi-Repo Status Scanner
+# 🔍 git status -all - Multi-Repo Status Scanner
 
 Quickly check **all** Git repositories under a folder for pending work —
 uncommitted changes, untracked files, unpushed/unpulled commits, and stashes.
