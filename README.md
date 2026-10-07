@@ -18,22 +18,7 @@ nothing is left behind before you leave.
 
 ## Quick Start
 
-### Windows Double-Click / CMD (.bat)
-
-Double-click `git-status-all.bat` directly from Windows Explorer, or run in cmd:
-
-```cmd
-:: Scan current folder
-git-status-all.bat
-
-:: Scan specific folder
-git-status-all.bat "D:\Projects"
-
-:: Dirty repos only
-git-status-all.bat -d "D:\Projects"
-```
-
-### PowerShell (Windows)
+### PowerShell (Windows) — Recommended (Faster)
 
 ```powershell
 # Scan current directory
@@ -47,6 +32,21 @@ git-status-all.bat -d "D:\Projects"
 
 # Fetch remotes first (accurate push/pull, needs network)
 .\git-status-all.ps1 -Path "D:\Projects" -Fetch -Dirty
+```
+
+### Windows Double-Click / CMD (.bat)
+
+Double-click `git-status-all.bat` directly from Windows Explorer, or run in cmd:
+
+```cmd
+:: Scan current folder
+git-status-all.bat
+
+:: Scan specific folder
+git-status-all.bat "D:\Projects"
+
+:: Dirty repos only
+git-status-all.bat -d "D:\Projects"
 ```
 
 ### Bash (Linux / macOS / Git Bash / WSL)

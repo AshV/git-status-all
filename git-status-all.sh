@@ -74,7 +74,7 @@ SCAN_PATH="$(cd "$SCAN_PATH" && pwd)"
 
 echo ""
 echo -e "${CYAN}  ╔══════════════════════════════════════════════════╗${RESET}"
-echo -e "${CYAN}  ║${WHITE}         git status --all  ·  Status Report        ${CYAN}║${RESET}"
+echo -e "${CYAN}  ║${WHITE}         git status --all  ·  Status Report       ${CYAN}║${RESET}"
 echo -e "${CYAN}  ╚══════════════════════════════════════════════════╝${RESET}"
 echo ""
 echo -e "  ${GRAY}Scanning:${RESET} ${SCAN_PATH}"
