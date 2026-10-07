@@ -85,18 +85,23 @@ chmod +x git-status-all.sh
   utils-lib           main            ·      ·      ·      ·      ·  ✓ clean
 
   ─────────────────────────────────────────
-  Total: 4  │  Dirty: 3  │  Clean: 1
+  Total: 4  │  Dirty: 3  │  Clean: 1  │  Time: 1.4s
 
   Built with ❤️ by AshV
 ```
 
 ## Options
 
-| Flag              | PowerShell     | Bash           | Description                           |
-| ----------------- | -------------- | -------------- | ------------------------------------- |
-| Scan path         | `-Path <dir>`  | `<dir>` (arg)  | Root folder to scan (default: `.`)    |
-| Dirty only        | `-Dirty`       | `-d, --dirty`  | Hide clean repos                      |
-| Fetch remotes     | `-Fetch`       | `-f, --fetch`  | Run `git fetch` first (slower)        |
+| Flag | PowerShell | Bash / Bat | Description |
+| :--- | :--- | :--- | :--- |
+| **Scan path** | `-Path <dir>` | `<dir>` (arg) | Root folder to scan (default: `.`) |
+| **Dirty only** | `-Dirty` | `-d, --dirty` | Hide clean repos |
+| **Fetch remotes** | `-Fetch` | `-f, --fetch` | Run `git fetch` first (slower, hits remotes) |
+| **Export report** | `-Export <file>` | `-o, --output <file>` | Export results to file (`.csv`, `.md`, `.json`) |
+| **Quick export** | `-Export` | `-e, --export` | Quick export to timestamped CSV (`git-status-report-YYYYMMDD-HHmmss.csv`) |
+
+> [!TIP]
+> **Interactive Export**: When running without export flags, the prompt at the end lets you press **`e`** to instantly save `git-status-report-YYYYMMDD-HHmmss.csv`!
 
 ## Requirements
 

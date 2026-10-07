@@ -2,21 +2,24 @@
 #
 # git-status-all.sh — Recursively scan for Git repos and report pending work.
 #
-# Shows: uncommitted changes, untracked files, unpushed/unpulled commits, stashes.
+# Shows: uncommitted changes, untracked files, unpushed/unpulled commits, stashes, elapsed time.
 #
 # Usage:
 #   ./git-status-all.sh [OPTIONS] [PATH]
 #
 # Options:
-#   -d, --dirty    Only show repos with pending work
-#   -f, --fetch    Run 'git fetch' before checking ahead/behind (slower, needs network)
-#   -h, --help     Show this help message
+#   -d, --dirty         Only show repos with pending work
+#   -f, --fetch         Run 'git fetch' before checking ahead/behind (slower, needs network)
+#   -o, --output FILE   Export report to FILE (.csv, .md, .json)
+#   -e, --export [FILE] Export report (defaults to git-status-report.csv)
+#   -h, --help          Show this help message
 #
 # Examples:
 #   ./git-status-all.sh                         # Scan current directory
 #   ./git-status-all.sh ~/Projects              # Scan specific folder
 #   ./git-status-all.sh -d ~/Projects           # Only dirty repos
-#   ./git-status-all.sh -f -d ~/Projects        # Fetch + dirty only
+#   ./git-status-all.sh -e ~/Projects           # Scan and export to CSV
+#   ./git-status-all.sh -o report.md ~/Projects # Scan and export to Markdown
 #
 
 set -euo pipefail
@@ -33,28 +36,30 @@ WHITE='\033[97m'
 BOLD='\033[1m'
 RESET='\033[0m'
 
-# ── Helper: wait for Enter before exiting ───────────────────────────────────
-
-wait_and_exit() {
-    local code="${1:-0}"
-    echo ""
-    echo -n "  Press Enter to close..."
-    read -r _ || true
-    exit "$code"
-}
-
 # ── Arguments ────────────────────────────────────────────────────────────────
 
 SCAN_PATH="."
 DIRTY_ONLY=false
 DO_FETCH=false
+EXPORT_FILE=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        -d|--dirty) DIRTY_ONLY=true; shift ;;
-        -f|--fetch) DO_FETCH=true;   shift ;;
+        -d|--dirty)
+            DIRTY_ONLY=true; shift ;;
+        -f|--fetch)
+            DO_FETCH=true;   shift ;;
+        -o|--output)
+            EXPORT_FILE="${2:-DEFAULT}"; shift 2 ;;
+        -e|--export)
+            if [[ $# -gt 1 && ! "$2" =~ ^- && ! -d "$2" ]]; then
+                EXPORT_FILE="$2"; shift 2
+            else
+                EXPORT_FILE="DEFAULT"; shift
+            fi
+            ;;
         -h|--help)
-            head -21 "$0" | tail -17
+            head -22 "$0" | tail -18
             exit 0
             ;;
         *)
@@ -78,13 +83,20 @@ if $DO_FETCH; then
 fi
 echo ""
 
+# ── Timer Start ──────────────────────────────────────────────────────────────
+
+START_MS=$(date +%s%3N 2>/dev/null || date +%s)
+
 # ── Find repos ───────────────────────────────────────────────────────────────
 
 mapfile -t GIT_DIRS < <(find "$SCAN_PATH" -type d -name ".git" 2>/dev/null | sort)
 
 if [[ ${#GIT_DIRS[@]} -eq 0 ]]; then
     echo -e "  ${YELLOW}⚠  No Git repositories found under ${SCAN_PATH}${RESET}"
-    wait_and_exit 0
+    echo ""
+    echo -n "  Press Enter to close..."
+    read -r _ || true
+    exit 0
 fi
 
 TOTAL=${#GIT_DIRS[@]}
@@ -164,6 +176,36 @@ done
 
 # Clear progress line
 printf "\r%100s\r" "" >&2
+
+# ── Timer End & Format ────────────────────────────────────────────────────────
+
+END_MS=$(date +%s%3N 2>/dev/null || date +%s)
+diff_val=$(( END_MS - START_MS ))
+
+if [[ ${#START_MS} -gt 10 && ${#END_MS} -gt 10 ]]; then
+    # Milliseconds calculation
+    if [[ $diff_val -lt 1000 ]]; then
+        elapsed_time="${diff_val}ms"
+    elif [[ $diff_val -lt 60000 ]]; then
+        sec=$(( diff_val / 1000 ))
+        dec=$(( (diff_val % 1000) / 100 ))
+        elapsed_time="${sec}.${dec}s"
+    else
+        total_sec=$(( diff_val / 1000 ))
+        min=$(( total_sec / 60 ))
+        rem_sec=$(( total_sec % 60 ))
+        elapsed_time="${min}m ${rem_sec}s"
+    fi
+else
+    # Seconds fallback
+    if [[ $diff_val -lt 60 ]]; then
+        elapsed_time="${diff_val}s"
+    else
+        min=$(( diff_val / 60 ))
+        rem_sec=$(( diff_val % 60 ))
+        elapsed_time="${min}m ${rem_sec}s"
+    fi
+fi
 
 # ── Compute column widths ─────────────────────────────────────────────────────
 
@@ -250,7 +292,7 @@ fi
 echo ""
 echo -e "  ${GRAY}─────────────────────────────────────────${RESET}"
 total_repos=${#R_NAME[@]}
-echo -e "  ${WHITE}Total: ${total_repos}${RESET}  │  ${RED}Dirty: ${dirty_count}${RESET}  │  ${GREEN}Clean: ${clean_count}${RESET}"
+echo -e "  ${WHITE}Total: ${total_repos}${RESET}  │  ${RED}Dirty: ${dirty_count}${RESET}  │  ${GREEN}Clean: ${clean_count}${RESET}  │  ${CYAN}Time: ${elapsed_time}${RESET}"
 echo ""
 echo -e "  ${GRAY}Legend: Mod=Modified  Unt=Untracked  Push=Unpushed  Pull=Unpulled${RESET}"
 echo -e "  ${GRAY}  Use -d/--dirty to show only repos needing attention${RESET}"
@@ -258,4 +300,97 @@ echo -e "  ${GRAY}  Use -f/--fetch to refresh remote status (needs network)${RES
 echo ""
 echo -e "  ${GRAY}Built with ❤️ by AshV${RESET}"
 
-wait_and_exit 0
+# ── Export Helper ────────────────────────────────────────────────────────────
+
+export_results() {
+    local target_file="$1"
+    local ext="${target_file##*.}"
+    ext=$(echo "$ext" | tr '[:upper:]' '[:lower:]')
+
+    case "$ext" in
+        json)
+            {
+                echo "["
+                local len=${#R_NAME[@]}
+                for i in "${!R_NAME[@]}"; do
+                    local comma=","
+                    [[ $i -eq $((len - 1)) ]] && comma=""
+                    cat <<EOF
+  {
+    "repository": "${R_NAME[$i]}",
+    "branch": "${R_BRANCH[$i]}",
+    "dirty": ${R_DIRTY[$i]},
+    "modified": ${R_MOD[$i]},
+    "untracked": ${R_UNT[$i]},
+    "ahead": ${R_AHEAD[$i]},
+    "behind": ${R_BEHIND[$i]},
+    "stashes": ${R_STASH[$i]}
+  }$comma
+EOF
+                done
+                echo "]"
+            } > "$target_file"
+            ;;
+
+        md)
+            {
+                echo "# git status --all — Scan Report"
+                echo ""
+                echo "- **Date**: $(date '+%Y-%m-%d %H:%M:%S')"
+                echo "- **Scanned Path**: \`$SCAN_PATH\`"
+                echo "- **Total**: ${#R_NAME[@]} | **Dirty**: $dirty_count | **Clean**: $clean_count | **Time**: $elapsed_time"
+                echo ""
+                echo "| Repository | Branch | Status | Mod | Unt | Push | Pull | Stash |"
+                echo "| :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |"
+                for i in "${!R_NAME[@]}"; do
+                    local st="clean"
+                    [[ "${R_DIRTY[$i]}" == "true" ]] && st="DIRTY"
+                    echo "| \`${R_NAME[$i]}\` | \`${R_BRANCH[$i]}\` | **$st** | ${R_MOD[$i]} | ${R_UNT[$i]} | ${R_AHEAD[$i]} | ${R_BEHIND[$i]} | ${R_STASH[$i]} |"
+                done
+                echo ""
+                echo "_Built with ❤️ by AshV_"
+            } > "$target_file"
+            ;;
+
+        *)
+            # Default: CSV
+            {
+                echo "Repository,Branch,Status,Modified,Untracked,Unpushed,Unpulled,Stashes"
+                for i in "${!R_NAME[@]}"; do
+                    local st="clean"
+                    [[ "${R_DIRTY[$i]}" == "true" ]] && st="DIRTY"
+                    echo "\"${R_NAME[$i]}\",\"${R_BRANCH[$i]}\",\"$st\",${R_MOD[$i]},${R_UNT[$i]},${R_AHEAD[$i]},${R_BEHIND[$i]},${R_STASH[$i]}"
+                done
+            } > "$target_file"
+            ;;
+    esac
+
+    echo ""
+    echo -e "  ${GREEN}✓ Results exported to: ${WHITE}$target_file${RESET}"
+}
+
+# ── Export & Prompt ──────────────────────────────────────────────────────────
+
+if [[ -n "$EXPORT_FILE" ]]; then
+    if [[ "$EXPORT_FILE" == "DEFAULT" ]]; then
+        EXPORT_FILE="git-status-report-$(date '+%Y%m%d-%H%M%S').csv"
+    fi
+    export_results "$EXPORT_FILE"
+    echo ""
+    echo -n "  Press Enter to close..."
+    read -r _ || true
+else
+    echo ""
+    echo -n "  Press Enter to close (or 'e' to export report)... "
+    read -r choice || true
+    choice=$(echo "${choice:-}" | tr '[:upper:]' '[:lower:]' | xargs 2>/dev/null || echo "${choice:-}")
+    if [[ "$choice" == "e" || "$choice" == "export" ]]; then
+        timestamped_file="git-status-report-$(date '+%Y%m%d-%H%M%S').csv"
+        export_results "$timestamped_file"
+        echo ""
+        echo -n "  Press Enter to close..."
+        read -r _ || true
+    fi
+fi
+
+exit 0
