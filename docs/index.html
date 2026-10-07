@@ -99,7 +99,8 @@
                     <h3>Working with Microservices or Many Projects?</h3>
                     <p>When you have dozens of repositories scattered across your machine, keeping track of which ones
                         have uncommitted work, untracked files, or unpushed commits becomes a nightmare. Running
-                        <code>git status</code> in every single folder is tedious and time-consuming.</p>
+                        <code>git status</code> in every single folder is tedious and time-consuming.
+                    </p>
                     <p><strong>git status -all</strong> solves this by recursing through your directories, finding all
                         valid Git repositories, and giving you a comprehensive, beautifully formatted status report.</p>
                 </div>
@@ -127,11 +128,7 @@
                     <h3>Colorful Output</h3>
                     <p>Visual cues and color-coded output make it easy to spot dirty repositories at a glance.</p>
                 </div>
-                <div class="glass-card feature-card">
-                    <div class="feature-icon">⏳</div>
-                    <h3>Performance Tracking</h3>
-                    <p>Includes built-in high-precision timers so you always know exactly how long the scan took.</p>
-                </div>
+
                 <div class="glass-card feature-card">
                     <div class="feature-icon">📄</div>
                     <h3>Single-File Script</h3>
@@ -207,9 +204,12 @@ git-status-all.bat "C:\MyProjects"</code></pre>
             <div class="glass-card problem-card">
                 <div class="card-content">
                     <h3>Run it from anywhere</h3>
-                    <p>Instead of typing the full path to the script every time, set up an alias in your terminal to run it with a quick command like <code>gsa</code> (Git Status All).</p>
-                    
-                    <h4 style="color: var(--accent-blue); margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.1rem;">PowerShell Profile</h4>
+                    <p>Instead of typing the full path to the script every time, set up an alias in your terminal to run
+                        it with a quick command like <code>gsa</code> (Git Status All).</p>
+
+                    <h4
+                        style="color: var(--accent-blue); margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.1rem;">
+                        PowerShell Profile</h4>
                     <div class="code-block" style="margin-top: 0.5rem; margin-bottom: 1.5rem;">
                         <pre><code># Open your profile
 notepad $PROFILE
@@ -218,7 +218,8 @@ notepad $PROFILE
 function gsa { & "C:\path\to\git-status-all.ps1" @args }</code></pre>
                     </div>
 
-                    <h4 style="color: var(--accent-blue); margin-bottom: 0.5rem; font-size: 1.1rem;">Bash / Zsh (.bashrc / .zshrc)</h4>
+                    <h4 style="color: var(--accent-blue); margin-bottom: 0.5rem; font-size: 1.1rem;">Bash / Zsh (.bashrc
+                        / .zshrc)</h4>
                     <div class="code-block" style="margin-top: 0.5rem;">
                         <pre><code># Open your configuration file
 nano ~/.bashrc
@@ -233,8 +234,7 @@ alias gsa='/path/to/git-status-all.sh'</code></pre>
 
     <footer class="footer">
         <div class="container">
-            <p>Built with ❤️ by developers, for developers.</p>
-            <p><a href="https://github.com/AshV/git-status-all">git status -all</a> is open source software.</p>
+            <p>Built with ❤️ by <a href="https://www.ashishvishwakarma.com/">AshV</p>
         </div>
     </footer>
 

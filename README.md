@@ -150,7 +150,3 @@ chmod +x git-status-all.sh
   # ~/.bashrc or ~/.zshrc
   alias gscan="A:/GitHub/GitScript/git-status-all.sh"
   ```
-
-## License
-
-MIT — Built with ❤️ by AshV
