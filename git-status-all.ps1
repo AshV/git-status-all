@@ -10,6 +10,7 @@
       - Unpushed commits (ahead of remote)
       - Unpulled commits (behind remote)
       - Stash entries
+      - Elapsed scan time
 
     Repos with nothing pending are shown as clean. Use -Dirty to hide them.
 
@@ -23,10 +24,14 @@
     If set, runs 'git fetch' on each repo before checking ahead/behind.
     This gives accurate remote status but is slower and needs network.
 
+.PARAMETER Export
+    Export results to a file (.csv, .md, .json). Defaults to CSV.
+
 .EXAMPLE
     .\git-status-all.ps1
     .\git-status-all.ps1 -Path "D:\Projects" -Dirty
-    .\git-status-all.ps1 -Path "D:\Projects" -Fetch
+    .\git-status-all.ps1 -Path "D:\Projects" -Export "report.csv"
+    .\git-status-all.ps1 -Path "D:\Projects" -Export "report.md"
 #>
 
 [CmdletBinding()]
@@ -36,7 +41,10 @@ param(
 
     [switch]$Dirty,
 
-    [switch]$Fetch
+    [switch]$Fetch,
+
+    [Alias("Output")]
+    [string]$Export
 )
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
@@ -44,29 +52,29 @@ param(
 function Get-AnsiColor {
     param([string]$Color)
     switch ($Color) {
-        "Red" { "`e[91m" }
-        "Yellow" { "`e[93m" }
-        "Green" { "`e[92m" }
-        "Cyan" { "`e[96m" }
+        "Red"     { "`e[91m" }
+        "Yellow"  { "`e[93m" }
+        "Green"   { "`e[92m" }
+        "Cyan"    { "`e[96m" }
         "Magenta" { "`e[95m" }
-        "Gray" { "`e[90m" }
-        "White" { "`e[97m" }
-        "Reset" { "`e[0m" }
-        default { "" }
+        "Gray"    { "`e[90m" }
+        "White"   { "`e[97m" }
+        "Reset"   { "`e[0m"  }
+        default   { ""       }
     }
 }
 
 $R = Get-AnsiColor "Reset"
 
 function Write-Header {
-    $line = "─" * 90
     Write-Host ""
     Write-Host "$(Get-AnsiColor 'Cyan')  ╔══════════════════════════════════════════════════╗$R"
-    Write-Host "$(Get-AnsiColor 'Cyan')  ║$(Get-AnsiColor 'White')         git status --all  ·  Status Report        $(Get-AnsiColor 'Cyan')║$R"
+    Write-Host "$(Get-AnsiColor 'Cyan')  ║$(Get-AnsiColor 'White')         git status --all  ·  Status Report       $(Get-AnsiColor 'Cyan')║$R"
     Write-Host "$(Get-AnsiColor 'Cyan')  ╚══════════════════════════════════════════════════╝$R"
     Write-Host ""
 }
 
+# ── Resolve root path ─────────────────────────────────────────────────────────
 
 $RootPath = (Resolve-Path -Path $Path -ErrorAction Stop).Path
 
@@ -76,6 +84,10 @@ if ($Fetch) {
     Write-Host "  $(Get-AnsiColor 'Yellow')⟳ Fetch mode enabled — will contact remotes (slower)$R"
 }
 Write-Host ""
+
+# ── Timer Start ──────────────────────────────────────────────────────────────
+
+$sw = [System.Diagnostics.Stopwatch]::StartNew()
 
 # ── Find all .git directories recursively ────────────────────────────────────
 
@@ -91,14 +103,18 @@ if (-not $gitDirs -or $gitDirs.Count -eq 0) {
 # ── Scan each repo ───────────────────────────────────────────────────────────
 
 $results = @()
-$total = $gitDirs.Count
+$total   = $gitDirs.Count
 $current = 0
 
 foreach ($gitDir in $gitDirs) {
     $current++
     $repoPath = $gitDir.Parent.FullName
-    $repoName = [System.IO.Path]::GetRelativePath($RootPath, $repoPath)
-    if ($repoName -eq ".") { $repoName = (Split-Path $repoPath -Leaf) }
+    $repoName = if ($repoPath.StartsWith($RootPath, [System.StringComparison]::OrdinalIgnoreCase)) {
+        $rel = $repoPath.Substring($RootPath.Length).TrimStart('\', '/')
+        if ([string]::IsNullOrEmpty($rel)) { Split-Path $repoPath -Leaf } else { $rel }
+    } else {
+        Split-Path $repoPath -Leaf
+    }
 
     # Progress indicator
     Write-Host "`r  $(Get-AnsiColor 'Gray')[$current/$total]$R Scanning $(Get-AnsiColor 'White')$repoName$R ...          " -NoNewline
@@ -109,30 +125,25 @@ foreach ($gitDir in $gitDirs) {
         if ($Fetch) {
             git fetch --all --quiet 2>$null
         }
-        $repoName = if ($repoPath.StartsWith($RootPath, [System.StringComparison]::OrdinalIgnoreCase)) {
-            $rel = $repoPath.Substring($RootPath.Length).TrimStart('\', '/')
-            if ([string]::IsNullOrEmpty($rel)) { Split-Path $repoPath -Leaf } else { $rel }
-        }
-        else {
-            Split-Path $repoPath -Leaf
-        }
+
+        # Current branch
         $branch = git symbolic-ref --short HEAD 2>$null
         if (-not $branch) { $branch = git rev-parse --short HEAD 2>$null }
         if (-not $branch) { $branch = "unknown" }
 
         # Uncommitted changes (staged + unstaged, excluding untracked)
         $statusOutput = git status --porcelain 2>$null
-        $modified = @($statusOutput | Where-Object { $_ -and $_ -notmatch '^\?\?' }).Count
-        $untracked = @($statusOutput | Where-Object { $_ -and $_ -match '^\?\?' }).Count
+        $modified     = @($statusOutput | Where-Object { $_ -and $_ -notmatch '^\?\?' }).Count
+        $untracked    = @($statusOutput | Where-Object { $_ -and $_ -match '^\?\?' }).Count
 
         # Ahead / behind remote
-        $ahead = 0
-        $behind = 0
+        $ahead    = 0
+        $behind   = 0
         $upstream = git rev-parse --abbrev-ref "@{upstream}" 2>$null
         if ($upstream) {
             $aheadBehind = git rev-list --left-right --count "HEAD...$upstream" 2>$null
             if ($aheadBehind -match '(\d+)\s+(\d+)') {
-                $ahead = [int]$Matches[1]
+                $ahead  = [int]$Matches[1]
                 $behind = [int]$Matches[2]
             }
         }
@@ -163,75 +174,62 @@ foreach ($gitDir in $gitDirs) {
 # Clear the progress line
 Write-Host "`r$(' ' * 100)`r" -NoNewline
 
-# ── Filter ──────────────────────────────────────────────────────────────────
+# ── Timer Stop & Format ──────────────────────────────────────────────────────
 
-if ($Dirty) {
-    $results = $results | Where-Object { $_.IsDirty }
+$sw.Stop()
+$elapsed = $sw.Elapsed
+$elapsedStr = if ($elapsed.TotalMinutes -ge 1) {
+    "{0}m {1:d2}s" -f [int]$elapsed.TotalMinutes, $elapsed.Seconds
+} elseif ($elapsed.TotalSeconds -ge 1) {
+    "{0:N1}s" -f $elapsed.TotalSeconds
+} else {
+    "{0}ms" -f $elapsed.Milliseconds
+}
+
+# ── Filter ───────────────────────────────────────────────────────────────────
+
+$displayResults = if ($Dirty) {
+    @($results | Where-Object { $_.IsDirty })
+} else {
+    $results
 }
 
 # ── Display ──────────────────────────────────────────────────────────────────
 
-if ($results.Count -eq 0) {
+if ($displayResults.Count -eq 0) {
     Write-Host "  $(Get-AnsiColor 'Green')✓  All repositories are clean!$R"
-    Write-Host ""
-    Read-Host "  Press Enter to close"
-    exit 0
-}
+} else {
+    # Column widths
+    $nameWidth   = [Math]::Max(($displayResults | ForEach-Object { $_.Name.Length }   | Measure-Object -Maximum).Maximum, 12)
+    $branchWidth = [Math]::Max(($displayResults | ForEach-Object { $_.Branch.Length } | Measure-Object -Maximum).Maximum, 8)
+    $nameWidth   = [Math]::Min($nameWidth, 40)
+    $branchWidth = [Math]::Min($branchWidth, 20)
 
-# Column widths
-$nameWidth = [Math]::Max(($results | ForEach-Object { $_.Name.Length }   | Measure-Object -Maximum).Maximum, 12)
-$branchWidth = [Math]::Max(($results | ForEach-Object { $_.Branch.Length } | Measure-Object -Maximum).Maximum, 8)
-$nameWidth = [Math]::Min($nameWidth, 40)
-$branchWidth = [Math]::Min($branchWidth, 20)
+    # Header
+    $headerFmt = "  {0,-$nameWidth}  {1,-$branchWidth}  {2,5}  {3,5}  {4,5}  {5,5}  {6,5}  {7}"
+    $header = $headerFmt -f "Repository", "Branch", "Mod", "Unt", "Push", "Pull", "Stash", "Status"
+    Write-Host "$(Get-AnsiColor 'Cyan')$header$R"
+    Write-Host "$(Get-AnsiColor 'Gray')  $("─" * ($nameWidth + $branchWidth + 46))$R"
 
-# Header
-$headerFmt = "  {0,-$nameWidth}  {1,-$branchWidth}  {2,5}  {3,5}  {4,5}  {5,5}  {6,5}  {7}"
-$header = $headerFmt -f "Repository", "Branch", "Mod", "Unt", "Push", "Pull", "Stash", "Status"
-Write-Host "$(Get-AnsiColor 'Cyan')$header$R"
-Write-Host "$(Get-AnsiColor 'Gray')  $("─" * ($nameWidth + $branchWidth + 46))$R"
+    foreach ($repo in $displayResults | Sort-Object -Property IsDirty -Descending) {
+        $name   = if ($repo.Name.Length -gt $nameWidth) { $repo.Name.Substring(0, $nameWidth - 1) + "…" } else { $repo.Name }
+        $branch = if ($repo.Branch.Length -gt $branchWidth) { $repo.Branch.Substring(0, $branchWidth - 1) + "…" } else { $repo.Branch }
 
-foreach ($repo in $results | Sort-Object -Property IsDirty -Descending) {
-    $name = $repo.Name.Length -gt $nameWidth ? $repo.Name.Substring(0, $nameWidth - 1) + "…" : $repo.Name
-    $branch = $repo.Branch.Length -gt $branchWidth ? $repo.Branch.Substring(0, $branchWidth - 1) + "…" : $repo.Branch
+        # Color-code each number
+        $modStr     = if ($repo.Modified  -gt 0) { "$(Get-AnsiColor 'Red')$("{0,5}" -f $repo.Modified)$R"  } else { "$(Get-AnsiColor 'Gray')$("{0,5}" -f '·')$R" }
+        $untStr     = if ($repo.Untracked -gt 0) { "$(Get-AnsiColor 'Yellow')$("{0,5}" -f $repo.Untracked)$R" } else { "$(Get-AnsiColor 'Gray')$("{0,5}" -f '·')$R" }
+        $aheadStr   = if ($repo.Ahead     -gt 0) { "$(Get-AnsiColor 'Magenta')$("{0,5}" -f $repo.Ahead)$R"    } else { "$(Get-AnsiColor 'Gray')$("{0,5}" -f '·')$R" }
+        $behindStr  = if ($repo.Behind    -gt 0) { "$(Get-AnsiColor 'Cyan')$("{0,5}" -f $repo.Behind)$R"      } else { "$(Get-AnsiColor 'Gray')$("{0,5}" -f '·')$R" }
+        $stashStr   = if ($repo.Stashes   -gt 0) { "$(Get-AnsiColor 'Yellow')$("{0,5}" -f $repo.Stashes)$R"   } else { "$(Get-AnsiColor 'Gray')$("{0,5}" -f '·')$R" }
 
-    # Color-code each number
-    $modStr = if ($repo.Modified -gt 0) { "$(Get-AnsiColor 'Red')$("{0,5}" -f $repo.Modified)$R" } else { "$(Get-AnsiColor 'Gray')$("{0,5}" -f '·')$R" }
-    $untStr = if ($repo.Untracked -gt 0) { "$(Get-AnsiColor 'Yellow')$("{0,5}" -f $repo.Untracked)$R" } else { "$(Get-AnsiColor 'Gray')$("{0,5}" -f '·')$R" }
-    $aheadStr = if ($repo.Ahead -gt 0) { "$(Get-AnsiColor 'Magenta')$("{0,5}" -f $repo.Ahead)$R" } else { "$(Get-AnsiColor 'Gray')$("{0,5}" -f '·')$R" }
-    $behindStr = if ($repo.Behind -gt 0) { "$(Get-AnsiColor 'Cyan')$("{0,5}" -f $repo.Behind)$R" } else { "$(Get-AnsiColor 'Gray')$("{0,5}" -f '·')$R" }
-    $stashStr = if ($repo.Stashes -gt 0) { "$(Get-AnsiColor 'Yellow')$("{0,5}" -f $repo.Stashes)$R" } else { "$(Get-AnsiColor 'Gray')$("{0,5}" -f '·')$R" }
+        # Status label
+        if ($repo.IsDirty) {
+            $statusStr = "$(Get-AnsiColor 'Red')● DIRTY$R"
+        } else {
+            $statusStr = "$(Get-AnsiColor 'Green')✓ clean$R"
+        }
 
-    # Status label
-    if ($repo.IsDirty) {
-        $statusStr = "$(Get-AnsiColor 'Red')● DIRTY$R"
-    }
-    else {
-        $statusStr = "$(Get-AnsiColor 'Green')✓ clean$R"
-    }
-
-    $branchColor = if ($repo.Branch -eq "main" -or $repo.Branch -eq "master") { Get-AnsiColor 'Green' } else { Get-AnsiColor 'Yellow' }
-
-    Write-Host "  $("{0,-$nameWidth}" -f $name)  $branchColor$("{0,-$branchWidth}" -f $branch)$R  $modStr  $untStr  $aheadStr  $behindStr  $stashStr  $statusStr"
-}
-
-$name = if ($repo.Name.Length -gt $nameWidth) { $repo.Name.Substring(0, $nameWidth - 1) + "…" } else { $repo.Name }
-$branch = if ($repo.Branch.Length -gt $branchWidth) { $repo.Branch.Substring(0, $branchWidth - 1) + "…" } else { $repo.Branch }
-$dirtyCount = @($results | Where-Object { $_.IsDirty }).Count
-$cleanCount = @($results | Where-Object { -not $_.IsDirty }).Count
-
-Write-Host ""
-Write-Host "$(Get-AnsiColor 'Gray')  ─────────────────────────────────────────$R"
-Write-Host "  $(Get-AnsiColor 'White')Total: $($results.Count)$R  │  $(Get-AnsiColor 'Red')Dirty: $dirtyCount$R  │  $(Get-AnsiColor 'Green')Clean: $cleanCount$R"
-
-# Legend
-Write-Host ""
-Write-Host "  $(Get-AnsiColor 'Gray')Legend: Mod=Modified  Unt=Untracked  Push=Unpushed  Pull=Unpulled$R"
-Write-Host "  $(Get-AnsiColor 'Gray')  Use -Dirty to show only repos needing attention$R"
-Write-Host "  $(Get-AnsiColor 'Gray')  Use -Fetch to refresh remote status (needs network)$R"
-Write-Host ""
-Write-Host "  $(Get-AnsiColor 'Gray')Built with ❤️ by AshV$R"
-Write-Host ""
-Read-Host "  Press Enter to close"
+        $branchColor = if ($repo.Branch -eq "main" -or $repo.Branch -eq "master") { Get-AnsiColor 'Green' } else { Get-AnsiColor 'Yellow' }
 
         Write-Host "  $("{0,-$nameWidth}" -f $name)  $branchColor$("{0,-$branchWidth}" -f $branch)$R  $modStr  $untStr  $aheadStr  $behindStr  $stashStr  $statusStr"
     }
