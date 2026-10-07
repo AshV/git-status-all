@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Scans a directory tree for Git repositories and reports pending work.
 
@@ -67,7 +67,6 @@ function Get-AnsiColor {
 $R = Get-AnsiColor "Reset"
 
 function Write-Header {
-    $line = "─" * 90
     Write-Host ""
     Write-Host "$(Get-AnsiColor 'Cyan')  ╔══════════════════════════════════════════════════╗$R"
     Write-Host "$(Get-AnsiColor 'Cyan')  ║$(Get-AnsiColor 'White')         git status --all  ·  Status Report        $(Get-AnsiColor 'Cyan')║$R"
@@ -110,8 +109,12 @@ $current  = 0
 foreach ($gitDir in $gitDirs) {
     $current++
     $repoPath = $gitDir.Parent.FullName
-    $repoName = [System.IO.Path]::GetRelativePath($RootPath, $repoPath)
-    if ($repoName -eq ".") { $repoName = (Split-Path $repoPath -Leaf) }
+    $repoName = if ($repoPath.StartsWith($RootPath, [System.StringComparison]::OrdinalIgnoreCase)) {
+        $rel = $repoPath.Substring($RootPath.Length).TrimStart('\', '/')
+        if ([string]::IsNullOrEmpty($rel)) { Split-Path $repoPath -Leaf } else { $rel }
+    } else {
+        Split-Path $repoPath -Leaf
+    }
 
     # Progress indicator
     Write-Host "`r  $(Get-AnsiColor 'Gray')[$current/$total]$R Scanning $(Get-AnsiColor 'White')$repoName$R ...          " -NoNewline
@@ -209,8 +212,8 @@ if ($displayResults.Count -eq 0) {
     Write-Host "$(Get-AnsiColor 'Gray')  $("─" * ($nameWidth + $branchWidth + 46))$R"
 
     foreach ($repo in $displayResults | Sort-Object -Property IsDirty -Descending) {
-        $name   = $repo.Name.Length -gt $nameWidth ? $repo.Name.Substring(0, $nameWidth - 1) + "…" : $repo.Name
-        $branch = $repo.Branch.Length -gt $branchWidth ? $repo.Branch.Substring(0, $branchWidth - 1) + "…" : $repo.Branch
+        $name   = if ($repo.Name.Length -gt $nameWidth) { $repo.Name.Substring(0, $nameWidth - 1) + "…" } else { $repo.Name }
+        $branch = if ($repo.Branch.Length -gt $branchWidth) { $repo.Branch.Substring(0, $branchWidth - 1) + "…" } else { $repo.Branch }
 
         # Color-code each number
         $modStr     = if ($repo.Modified  -gt 0) { "$(Get-AnsiColor 'Red')$("{0,5}" -f $repo.Modified)$R"  } else { "$(Get-AnsiColor 'Gray')$("{0,5}" -f '·')$R" }
@@ -261,17 +264,17 @@ function Export-ScanReport {
         }
         ".md" {
             $sb = [System.Text.StringBuilder]::new()
-            [void]$sb.AppendLine("# git status --all — Scan Report")
+            [void]$sb.AppendLine("# git status --all - Scan Report")
             [void]$sb.AppendLine("")
             [void]$sb.AppendLine("- **Date**: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')")
-            [void]$sb.AppendLine("- **Scanned Path**: \`$RootPath\`")
+            [void]$sb.AppendLine("- **Scanned Path**: ``$RootPath``")
             [void]$sb.AppendLine("- **Total**: $($results.Count) | **Dirty**: $dirtyCount | **Clean**: $cleanCount | **Time**: $elapsedStr")
             [void]$sb.AppendLine("")
             [void]$sb.AppendLine("| Repository | Branch | Status | Mod | Unt | Push | Pull | Stash |")
             [void]$sb.AppendLine("| :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |")
-            foreach ($r in ($results | Sort-Object -Property IsDirty -Descending)) {
-                $st = if ($r.IsDirty) { "**DIRTY**" } else { "clean" }
-                [void]$sb.AppendLine("| \`$($r.Name)\` | \`$($r.Branch)\` | $st | $($r.Modified) | $($r.Untracked) | $($r.Ahead) | $($r.Behind) | $($r.Stashes) |")
+            foreach ($repoItem in ($results | Sort-Object -Property IsDirty -Descending)) {
+                $st = if ($repoItem.IsDirty) { "**DIRTY**" } else { "clean" }
+                [void]$sb.AppendLine("| ``$($repoItem.Name)`` | ``$($repoItem.Branch)`` | $st | $($repoItem.Modified) | $($repoItem.Untracked) | $($repoItem.Ahead) | $($repoItem.Behind) | $($repoItem.Stashes) |")
             }
             [void]$sb.AppendLine("")
             [void]$sb.AppendLine("_Built with ❤️ by AshV_")
