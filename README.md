@@ -134,7 +134,7 @@ chmod +x git-status-all.sh
 ## Requirements
 
 - **Git** (any recent version)
-- **PowerShell 7+** (for `.ps1`) or **Bash 3.2+** (for `.sh`, works out-of-the-box with default macOS Bash)
+- **PowerShell 5.1+ / 7+** (for `.ps1`) or **Bash 3.2+** (for `.sh`, works out-of-the-box with default macOS Bash)
 - No other dependencies!
 
 ## Tips & Git Integration

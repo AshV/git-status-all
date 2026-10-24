@@ -4,29 +4,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>git status -all - Multi-Repo Status Scanner</title>
+    <title>git status -all — Multi-Repository Status Scanner</title>
 
     <!-- SEO Meta Tags -->
     <meta name="description"
-        content="A blazing-fast script to check the Git status of all your repositories at once. Get insights, export reports, and streamline your workflow.">
+        content="A fast, zero-dependency CLI tool to check the Git status of all repositories under any directory. Track uncommitted changes, unpushed commits, and stashes at a glance.">
     <meta name="keywords"
-        content="git, status, multiple repositories, batch script, powershell, automation, developer tools">
+        content="git, git status, multiple repositories, powershell, bash, multi-repo, developer tools, git-status-all">
     <meta name="author" content="AshV">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://github.com/AshV/git-status-all">
-    <meta property="og:title" content="git status -all - Master Your Repositories">
+    <meta property="og:url" content="https://www.ashishvishwakarma.com/git-status-all/">
+    <meta property="og:title" content="git status -all — Multi-Repository Status Scanner">
     <meta property="og:description"
-        content="A blazing-fast script to check the Git status of all your repositories at once. Get insights, export reports, and streamline your workflow.">
+        content="Instantly scan directory trees for Git repositories and view pending edits, unpushed commits, and stashes in a unified report.">
     <meta property="og:image" content="https://www.ashishvishwakarma.com/git-status-all/assets/og-image.jpg">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://github.com/AshV/git-status-all">
-    <meta property="twitter:title" content="git status -all - Master Your Repositories">
+    <meta property="twitter:title" content="git status -all — Multi-Repository Status Scanner">
     <meta property="twitter:description"
-        content="A blazing-fast script to check the Git status of all your repositories at once. Get insights, export reports, and streamline your workflow.">
+        content="Instantly scan directory trees for Git repositories and view pending edits, unpushed commits, and stashes in a unified report.">
     <meta property="twitter:image" content="https://www.ashishvishwakarma.com/git-status-all/assets/og-image.jpg">
 
     <link rel="icon" type="image/jpeg" href="./assets/logo.jpg">
@@ -35,321 +34,526 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
         rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div class="background-effects">
+    <!-- Background Effects -->
+    <div class="background-effects" aria-hidden="true">
         <div class="glow-orb orb-1"></div>
         <div class="glow-orb orb-2"></div>
+        <div class="glow-orb orb-3"></div>
     </div>
 
-    <nav class="navbar">
+    <!-- Navigation -->
+    <nav class="navbar" id="top-nav">
         <div class="container nav-content">
-            <div class="logo-area">
-                <img src="./assets/logo.jpg" alt="git status -all Logo" class="nav-logo">
+            <a href="#" class="logo-area" aria-label="git status -all home">
+                <img src="./assets/logo.jpg" alt="git status -all logo" class="nav-logo">
                 <span class="nav-title">git status -all</span>
                 <span class="nav-version">v2.0.1</span>
-            </div>
+            </a>
             <div class="nav-links">
-                <a href="#downloads">Download</a>
-                <a href="#problem">The Problem</a>
                 <a href="#features">Features</a>
-                <a href="#guide">User Guide</a>
+                <a href="#downloads">Download</a>
+                <a href="#options">Options</a>
                 <a href="#alias">Setup Alias</a>
-                <a href="https://github.com/AshV/git-status-all" class="btn btn-outline" target="_blank">View on
-                    GitHub</a>
+                <a href="https://github.com/AshV/git-status-all" class="btn btn-outline btn-sm" target="_blank" rel="noopener noreferrer">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                    Star on GitHub
+                </a>
             </div>
         </div>
     </nav>
 
+    <!-- Hero Section -->
     <header class="hero container">
         <div class="hero-content">
-            <div class="hero-badge"><span class="badge-dot"></span> Latest Release: v2.0.1</div>
-            <h1 class="hero-title">Stop losing track of your <span class="text-gradient">Git repositories.</span></h1>
-            <p class="hero-subtitle">Instantly scan directories, find uncommitted changes, unpushed commits, and manage
-                all your repos from a single command.</p>
+            <a href="https://github.com/AshV/git-status-all/releases" class="hero-badge" target="_blank" rel="noopener noreferrer">
+                <span class="badge-dot"></span>
+                <span>v2.0.1 Released · Zero Dependencies</span>
+            </a>
+            <h1 class="hero-title">
+                One command to see <span class="text-gradient">every Git repo.</span>
+            </h1>
+            <p class="hero-subtitle">
+                Instantly scan folders, surface uncommitted edits, unpushed commits, and stashes across all your repositories in milliseconds.
+            </p>
+
             <div class="hero-actions">
-                <a href="#downloads" class="btn btn-primary">Download Scripts</a>
-                <a href="#guide" class="btn btn-secondary">User Guide</a>
+                <a href="#downloads" class="btn btn-primary" id="btn-hero-download">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Get Standalone Script
+                </a>
+                <a href="https://github.com/AshV/git-status-all" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                    </svg>
+                    View Source
+                </a>
             </div>
-            <div class="terminal-mockup">
-                <div class="terminal-header">
-                    <span class="dot red"></span>
-                    <span class="dot yellow"></span>
-                    <span class="dot green"></span>
-                </div>
-                <div class="terminal-body">
-                    <p><span class="prompt">></span> .\git-status-all.ps1 -Path "C:\Projects"</p>
-                    <p class="success">Scanning 15 repositories...</p>
-                    <p>📦 Repo1 - <span class="error">● Uncommitted, Unpushed</span></p>
-                    <p>📦 Repo2 - <span class="warning">▲ Unpushed (2 commits)</span></p>
-                    <p>📦 Repo3 - <span class="success">✓ Clean</span></p>
-                    <p class="success">Completed in 1.2s</p>
+
+            <!-- Quick CLI Bar -->
+            <div class="hero-cli-bar">
+                <span class="hero-cli-prompt">&gt;</span>
+                <code>irm https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.ps1 | iex</code>
+                <button class="copy-btn" id="btn-hero-copy" onclick="copyCommand('irm https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.ps1 | iex', this)" aria-label="Copy PowerShell quick run command">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    Copy
+                </button>
+            </div>
+
+            <!-- Authentic Terminal Window Preview -->
+            <div class="terminal-wrapper">
+                <div class="terminal-mockup">
+                    <div class="terminal-header">
+                        <div class="terminal-controls">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                        </div>
+                        <div class="terminal-title">
+                            <span>git-status-all — Terminal</span>
+                        </div>
+                        <div style="display: flex; gap: 0.4rem;">
+                            <button class="copy-btn term-filter-btn active" onclick="setTerminalFilter('all', this)" style="padding: 0.2rem 0.6rem; font-size: 0.72rem;">All Repos</button>
+                            <button class="copy-btn term-filter-btn" onclick="setTerminalFilter('dirty', this)" style="padding: 0.2rem 0.6rem; font-size: 0.72rem;">-Dirty Only</button>
+                        </div>
+                    </div>
+                    <div class="terminal-body" id="terminal-content">
+                        <pre>  <span class="t-cyan">╔══════════════════════════════════════════════════╗</span>
+  <span class="t-cyan">║</span><span class="t-white">    git status --all v2.0.1  ·  Status Report    </span><span class="t-cyan">║</span>
+  <span class="t-cyan">╚══════════════════════════════════════════════════╝</span>
+
+  <span class="t-gray">Scanning:</span> D:\Projects
+
+  <span class="t-cyan">Repository          Branch        Mod    Unt   Push   Pull  Stash  Status</span>
+  <span class="t-gray">──────────────────────────────────────────────────────────────────────────────────────────</span>
+  my-web-app          <span class="t-yellow">main</span>            <span class="t-red">  3</span>    <span class="t-yellow">  1</span>    <span class="t-magenta">  2</span>    <span class="t-gray">  ·</span>    <span class="t-gray">  ·</span>  <span class="t-red">● Uncommitted, Unpushed</span>
+  api-server          <span class="t-yellow">feature/auth</span>    <span class="t-gray">  ·</span>    <span class="t-gray">  ·</span>    <span class="t-magenta">  5</span>    <span class="t-gray">  ·</span>    <span class="t-gray">  ·</span>  <span class="t-magenta">▲ Unpushed</span>
+  docs-site           <span class="t-green">main</span>            <span class="t-gray">  ·</span>    <span class="t-gray">  ·</span>    <span class="t-gray">  ·</span>    <span class="t-gray">  ·</span>    <span class="t-yellow">  1</span>  <span class="t-yellow">◌ Stash only</span>
+  utils-lib           <span class="t-green">main</span>            <span class="t-gray">  ·</span>    <span class="t-gray">  ·</span>    <span class="t-gray">  ·</span>    <span class="t-gray">  ·</span>    <span class="t-gray">  ·</span>  <span class="t-green">✓ clean</span>
+
+  <span class="t-gray">─────────────────────────────────────────</span>
+  <span class="t-white">Total: 4</span>  │  <span class="t-red">Dirty: 3</span>  │  <span class="t-green">Clean: 1</span>  │  <span class="t-cyan">Time: 1.4s</span>
+
+  <span class="t-gray">git status --all v2.0.1 · Built with ❤️ by AshV</span></pre>
+                    </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <section id="downloads" class="section">
-        <div class="container">
-            <h2 class="section-title">Download Standalone Scripts</h2>
-            <p style="text-align: center; color: var(--text-secondary); max-width: 650px; margin: -1.5rem auto 2.5rem; font-size: 1.1rem;">
-                Each script is 100% self-sufficient (v2.0.1). Download only the single file you need for your platform — zero dependencies required.
-            </p>
-            <div class="downloads-grid">
-                <!-- PowerShell -->
-                <div class="glass-card download-card">
-                    <div>
-                        <span class="download-badge badge-recommended">Windows · Recommended</span>
-                        <div class="download-icon">⚡</div>
-                        <h3 class="download-title">git-status-all.ps1</h3>
-                        <p class="download-platform">PowerShell 5.1+ / PowerShell 7+ on Windows</p>
-                        <p class="download-desc">Blazing fast multi-repo scanner tailored for Windows. Features native ANSI colors, semantic status badges, and multi-format export.</p>
-                    </div>
-                    <div class="download-actions">
-                        <a href="https://github.com/AshV/git-status-all/raw/main/git-status-all.ps1" download="git-status-all.ps1" class="btn btn-primary btn-download">
-                            ⬇ Download .ps1
-                        </a>
-                        <div class="cli-copy-box">
-                            <code>irm https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.ps1 -OutFile git-status-all.ps1</code>
-                            <button class="copy-mini-btn" onclick="copyCommand('irm https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.ps1 -OutFile git-status-all.ps1', this)">Copy</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- macOS Double-Click -->
-                <div class="glass-card download-card">
-                    <div>
-                        <span class="download-badge badge-macos">macOS · Finder</span>
-                        <div class="download-icon">🍎</div>
-                        <h3 class="download-title">git-status-all.command</h3>
-                        <p class="download-platform">macOS 10.15+ (Catalina, Sonoma, Sequoia)</p>
-                        <p class="download-desc">Self-contained double-click script for macOS Finder. Automatically runs in its target directory and launches Terminal.</p>
-                    </div>
-                    <div class="download-actions">
-                        <a href="https://github.com/AshV/git-status-all/raw/main/git-status-all.command" download="git-status-all.command" class="btn btn-primary btn-download">
-                            ⬇ Download .command
-                        </a>
-                        <div class="cli-copy-box">
-                            <code>curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.command && chmod +x git-status-all.command</code>
-                            <button class="copy-mini-btn" onclick="copyCommand('curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.command && chmod +x git-status-all.command', this)">Copy</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Bash (.sh) -->
-                <div class="glass-card download-card">
-                    <div>
-                        <span class="download-badge badge-bash">Linux · Unix · WSL</span>
-                        <div class="download-icon">🐧</div>
-                        <h3 class="download-title">git-status-all.sh</h3>
-                        <p class="download-platform">Linux, macOS Terminal, WSL, Git Bash</p>
-                        <p class="download-desc">Universal POSIX Bash script for terminals, servers, and CI/CD pipelines. Fast scanning with comprehensive status indicators.</p>
-                    </div>
-                    <div class="download-actions">
-                        <a href="https://github.com/AshV/git-status-all/raw/main/git-status-all.sh" download="git-status-all.sh" class="btn btn-primary btn-download">
-                            ⬇ Download .sh
-                        </a>
-                        <div class="cli-copy-box">
-                            <code>curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.sh && chmod +x git-status-all.sh</code>
-                            <button class="copy-mini-btn" onclick="copyCommand('curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.sh && chmod +x git-status-all.sh', this)">Copy</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Windows Batch (.bat) -->
-                <div class="glass-card download-card">
-                    <div>
-                        <span class="download-badge badge-batch">Windows · CMD / Explorer</span>
-                        <div class="download-icon">🪟</div>
-                        <h3 class="download-title">git-status-all.bat</h3>
-                        <p class="download-platform">Windows Explorer Double-Click or CMD</p>
-                        <p class="download-desc">Polyglot script that runs natively from cmd.exe or via double-click in File Explorer using Git Bash.</p>
-                    </div>
-                    <div class="download-actions">
-                        <a href="https://github.com/AshV/git-status-all/raw/main/git-status-all.bat" download="git-status-all.bat" class="btn btn-primary btn-download">
-                            ⬇ Download .bat
-                        </a>
-                        <div class="cli-copy-box">
-                            <code>curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.bat</code>
-                            <button class="copy-mini-btn" onclick="copyCommand('curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.bat', this)">Copy</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="problem" class="section">
-        <div class="container">
-            <h2 class="section-title">The Problem</h2>
-            <div class="glass-card problem-card">
-                <div class="card-content">
-                    <h3>Working with Microservices or Many Projects?</h3>
-                    <p>When you have dozens of repositories scattered across your machine, keeping track of which ones
-                        have uncommitted work, untracked files, or unpushed commits becomes a nightmare. Running
-                        <code>git status</code> in every single folder is tedious and time-consuming.
-                    </p>
-                    <p><strong>git status -all</strong> solves this by recursing through your directories, finding all
-                        valid Git repositories, and giving you a comprehensive, beautifully formatted status report.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
+    <!-- Bento Features Section -->
     <section id="features" class="section">
         <div class="container">
-            <h2 class="section-title">Powerful Features</h2>
+            <div class="section-header">
+                <span class="section-label">Engineered For Performance</span>
+                <h2 class="section-title">Everything you need to stay in sync</h2>
+                <p class="section-desc">Designed for developers juggling multiple microservices, client projects, and local repositories.</p>
+            </div>
+
             <div class="features-grid">
-                <div class="glass-card feature-card">
-                    <div class="feature-icon">🚀</div>
-                    <h3>Blazing Fast</h3>
-                    <p>Highly optimized PowerShell and Bash scripts scan your directories quickly, skipping invalid
-                        folders.</p>
+                <!-- Feature 1 -->
+                <div class="feature-card col-6">
+                    <div class="feature-icon-box">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </div>
+                    <h3>Recursive Deep Discovery</h3>
+                    <p>Scans directory trees of any depth in milliseconds. Safely identifies genuine Git roots while bypassing unnecessary nested metadata and non-repository folders.</p>
+                    <div class="feature-pill-list">
+                        <span class="feature-pill">Fast directory walking</span>
+                        <span class="feature-pill">Nested monorepos</span>
+                        <span class="feature-pill">Path filtering</span>
+                    </div>
                 </div>
-                <div class="glass-card feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3>Multi-format Export</h3>
-                    <p>Export your repository statuses to CSV, JSON, or Markdown for reporting and documentation.</p>
-                </div>
-                <div class="glass-card feature-card">
-                    <div class="feature-icon">🎨</div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card col-6">
+                    <div class="feature-icon-box">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                    </div>
                     <h3>Semantic Status Indicators</h3>
-                    <p>More than just "dirty" — instantly see if you need to commit, push, pull, or check stashed work.</p>
+                    <p>Don't settle for a binary dirty/clean flag. Instantly differentiate between staged/unstaged edits, unpushed commits, unpulled remote updates, diverged heads, and stashes.</p>
+                    <div class="feature-pill-list">
+                        <span class="feature-pill">● Uncommitted</span>
+                        <span class="feature-pill">▲ Unpushed</span>
+                        <span class="feature-pill">▼ Behind</span>
+                        <span class="feature-pill">◌ Stash only</span>
+                    </div>
                 </div>
 
-                <div class="glass-card feature-card">
-                    <div class="feature-icon">📄</div>
-                    <h3>Single-File Script</h3>
-                    <p>No dependencies or complex installations. Just download a single script file and run it instantly
-                        anywhere.</p>
+                <!-- Feature 3 -->
+                <div class="feature-card col-4">
+                    <div class="feature-icon-box">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                    </div>
+                    <h3>Multi-Format Export</h3>
+                    <p>Export scan summaries to structured CSV, GitHub-flavored Markdown, or JSON for automated audit logs and CI pipelines.</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-card col-4">
+                    <div class="feature-icon-box">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                    </div>
+                    <h3>Zero External Dependencies</h3>
+                    <p>Every script is 100% standalone. Download a single file and execute immediately — no Node, Python, or packages needed.</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feature-card col-4">
+                    <div class="feature-icon-box">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 14 14"></polyline>
+                        </svg>
+                    </div>
+                    <h3>Interactive Workflow</h3>
+                    <p>After each scan, press <code>e</code> to instantly save a timestamped report, or pass <code>-Dirty</code> to filter noise.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="guide" class="section">
+    <!-- Platform Download Section (Clean Platform Switcher) -->
+    <section id="downloads" class="section">
         <div class="container">
-            <h2 class="section-title">User Guide</h2>
-            <div class="glass-card guide-card">
-                <div class="tabs">
-                    <button class="tab-btn active" onclick="showTab('powershell')">PowerShell (Recommended)</button>
-                    <button class="tab-btn" onclick="showTab('macos')">macOS (.command)</button>
-                    <button class="tab-btn" onclick="showTab('bash')">Bash (.sh)</button>
-                    <button class="tab-btn" onclick="showTab('batch')">Batch (.bat)</button>
+            <div class="section-header">
+                <span class="section-label">Single-File Scripts</span>
+                <h2 class="section-title">Download for your platform</h2>
+                <p class="section-desc">Pick your preferred shell or workflow. Each script is self-sufficient with zero package dependencies.</p>
+            </div>
+
+            <div class="platform-hub">
+                <!-- Platform Navigation Tabs -->
+                <div class="platform-tabs" role="tablist">
+                    <button class="platform-tab-btn active" onclick="switchPlatform('panel-ps', this)" role="tab" id="tab-ps">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="4 17 10 11 4 5"></polyline>
+                            <line x1="12" y1="19" x2="20" y2="19"></line>
+                        </svg>
+                        PowerShell <span class="tab-badge">Recommended</span>
+                    </button>
+                    <button class="platform-tab-btn" onclick="switchPlatform('panel-mac', this)" role="tab" id="tab-mac">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                        macOS Finder
+                    </button>
+                    <button class="platform-tab-btn" onclick="switchPlatform('panel-bash', this)" role="tab" id="tab-bash">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 17l6-6-6-6M12 19h8"></path>
+                        </svg>
+                        Linux &amp; Bash
+                    </button>
+                    <button class="platform-tab-btn" onclick="switchPlatform('panel-bat', this)" role="tab" id="tab-bat">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                        </svg>
+                        Windows CMD
+                    </button>
                 </div>
 
-                <div id="powershell" class="tab-content active">
-                    <h3>Running on Windows (PowerShell)</h3>
-                    <p>The PowerShell version is highly optimized and offers the best feature set.</p>
-                    <div class="code-block">
-                        <pre><code># Basic scan in current directory
-.\git-status-all.ps1
-
-# Scan a specific directory
-.\git-status-all.ps1 -Path "C:\MyProjects"
-
-# Show dirty repos only
-.\git-status-all.ps1 -Dirty
-
-# Fetch remotes first
-.\git-status-all.ps1 -Fetch -Dirty
-
-# Export results to Markdown, CSV, or JSON
-.\git-status-all.ps1 -Export md</code></pre>
+                <!-- Panel 1: PowerShell -->
+                <div class="platform-panel active" id="panel-ps" role="tabpanel">
+                    <div class="platform-details-grid">
+                        <div class="platform-info">
+                            <h3>git-status-all.ps1</h3>
+                            <p class="platform-tagline">PowerShell 5.1+ / PowerShell 7+ on Windows</p>
+                            <ul class="platform-bullets">
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    High-performance recursive discovery on Windows filesystems
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    Native ANSI color output and semantic status indicators
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    Direct export to CSV, JSON, and GitHub-flavored Markdown
+                                </li>
+                            </ul>
+                            <a href="https://github.com/AshV/git-status-all/raw/main/git-status-all.ps1" download="git-status-all.ps1" class="btn btn-primary" id="btn-dl-ps">
+                                Download git-status-all.ps1
+                            </a>
+                        </div>
+                        <div class="platform-action-box">
+                            <span class="action-label">Quick Download via PowerShell</span>
+                            <div class="code-copy-box">
+                                <code>irm https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.ps1 -OutFile git-status-all.ps1</code>
+                                <button class="copy-btn" onclick="copyCommand('irm https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.ps1 -OutFile git-status-all.ps1', this)">Copy</button>
+                            </div>
+                            <span class="action-label">Run Directly</span>
+                            <div class="code-copy-box">
+                                <code>.\git-status-all.ps1 -Path "D:\Projects" -Dirty</code>
+                                <button class="copy-btn" onclick="copyCommand('.\\git-status-all.ps1 -Path &quot;D:\\Projects&quot; -Dirty', this)">Copy</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div id="macos" class="tab-content">
-                    <h3>Running on macOS (Double-Click / Terminal)</h3>
-                    <p>Self-contained script tailored for macOS. Double-click <code>git-status-all.command</code> directly from Finder, or run in Terminal.</p>
-                    <div class="code-block">
-                        <pre><code># Make executable (first time only)
-chmod +x git-status-all.command
-
-# Double-click git-status-all.command in Finder, or run in Terminal:
-./git-status-all.command
-
-# Scan a specific directory
-./git-status-all.command ~/Projects
-
-# Show dirty repos only
-./git-status-all.command -d ~/Projects</code></pre>
+                <!-- Panel 2: macOS -->
+                <div class="platform-panel" id="panel-mac" role="tabpanel">
+                    <div class="platform-details-grid">
+                        <div class="platform-info">
+                            <h3>git-status-all.command</h3>
+                            <p class="platform-tagline">macOS 10.15+ (Catalina, Sonoma, Sequoia)</p>
+                            <ul class="platform-bullets">
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    Double-click directly from Finder to scan that folder
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    Automatically launches Terminal.app and sets proper directory context
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    Zero dependencies — uses system Bash and Git
+                                </li>
+                            </ul>
+                            <a href="https://github.com/AshV/git-status-all/raw/main/git-status-all.command" download="git-status-all.command" class="btn btn-primary" id="btn-dl-mac">
+                                Download git-status-all.command
+                            </a>
+                        </div>
+                        <div class="platform-action-box">
+                            <span class="action-label">Quick Download via Terminal</span>
+                            <div class="code-copy-box">
+                                <code>curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.command && chmod +x git-status-all.command</code>
+                                <button class="copy-btn" onclick="copyCommand('curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.command && chmod +x git-status-all.command', this)">Copy</button>
+                            </div>
+                            <span class="action-label">Run in Terminal</span>
+                            <div class="code-copy-box">
+                                <code>./git-status-all.command ~/Projects -d</code>
+                                <button class="copy-btn" onclick="copyCommand('./git-status-all.command ~/Projects -d', this)">Copy</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div id="bash" class="tab-content">
-                    <h3>Running on Linux/macOS (Bash)</h3>
-                    <p>Universal Bash script for any Unix environment or CI/CD.</p>
-                    <div class="code-block">
-                        <pre><code># Make it executable
-chmod +x git-status-all.sh
-
-# Basic scan
-./git-status-all.sh
-
-# Scan a specific directory
-./git-status-all.sh -d ~/Projects</code></pre>
+                <!-- Panel 3: Linux / Bash -->
+                <div class="platform-panel" id="panel-bash" role="tabpanel">
+                    <div class="platform-details-grid">
+                        <div class="platform-info">
+                            <h3>git-status-all.sh</h3>
+                            <p class="platform-tagline">Linux, macOS Terminal, WSL, Git Bash</p>
+                            <ul class="platform-bullets">
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    POSIX-compatible Bash script tailored for servers and CI/CD
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    Colorized tabular output with pipe and redirect support
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    Export report to CSV, Markdown, or JSON
+                                </li>
+                            </ul>
+                            <a href="https://github.com/AshV/git-status-all/raw/main/git-status-all.sh" download="git-status-all.sh" class="btn btn-primary" id="btn-dl-bash">
+                                Download git-status-all.sh
+                            </a>
+                        </div>
+                        <div class="platform-action-box">
+                            <span class="action-label">Quick Download via Curl</span>
+                            <div class="code-copy-box">
+                                <code>curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.sh && chmod +x git-status-all.sh</code>
+                                <button class="copy-btn" onclick="copyCommand('curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.sh && chmod +x git-status-all.sh', this)">Copy</button>
+                            </div>
+                            <span class="action-label">Run in Terminal</span>
+                            <div class="code-copy-box">
+                                <code>./git-status-all.sh -d ~/Projects</code>
+                                <button class="copy-btn" onclick="copyCommand('./git-status-all.sh -d ~/Projects', this)">Copy</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div id="batch" class="tab-content">
-                    <h3>Running on Windows (Command Prompt)</h3>
-                    <p>If you prefer the classic Windows Command Prompt, a lightweight batch script is also available.
-                    </p>
-                    <div class="code-block">
-                        <pre><code>:: Basic scan in current directory
-git-status-all.bat
-
-:: Scan a specific directory
-git-status-all.bat "C:\MyProjects"</code></pre>
+                <!-- Panel 4: Windows CMD -->
+                <div class="platform-panel" id="panel-bat" role="tabpanel">
+                    <div class="platform-details-grid">
+                        <div class="platform-info">
+                            <h3>git-status-all.bat</h3>
+                            <p class="platform-tagline">Windows Explorer Double-Click or CMD.exe</p>
+                            <ul class="platform-bullets">
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    Polyglot script that can be launched directly from File Explorer
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    Finds Git Bash automatically to execute with full ANSI support
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    Seamless fallback for classic Command Prompt users
+                                </li>
+                            </ul>
+                            <a href="https://github.com/AshV/git-status-all/raw/main/git-status-all.bat" download="git-status-all.bat" class="btn btn-primary" id="btn-dl-bat">
+                                Download git-status-all.bat
+                            </a>
+                        </div>
+                        <div class="platform-action-box">
+                            <span class="action-label">Quick Download via Curl</span>
+                            <div class="code-copy-box">
+                                <code>curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.bat</code>
+                                <button class="copy-btn" onclick="copyCommand('curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.bat', this)">Copy</button>
+                            </div>
+                            <span class="action-label">Run in CMD</span>
+                            <div class="code-copy-box">
+                                <code>git-status-all.bat -d "D:\Projects"</code>
+                                <button class="copy-btn" onclick="copyCommand('git-status-all.bat -d &quot;D:\\Projects&quot;', this)">Copy</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Options Reference Section -->
+    <section id="options" class="section">
+        <div class="container guide-container">
+            <div class="section-header">
+                <span class="section-label">Command Options</span>
+                <h2 class="section-title">CLI Flags &amp; Options</h2>
+                <p class="section-desc">Unified parameters across PowerShell, Bash, and Windows Batch.</p>
+            </div>
+
+            <div class="guide-box">
+                <div class="options-table-wrapper">
+                    <table class="options-table">
+                        <thead>
+                            <tr>
+                                <th>Flag</th>
+                                <th>PowerShell</th>
+                                <th>Bash / CMD</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong style="color: var(--text-primary);">Scan Path</strong></td>
+                                <td><code>-Path &lt;dir&gt;</code></td>
+                                <td><code>&lt;dir&gt;</code> (arg)</td>
+                                <td>Root folder to scan. Defaults to current directory (<code>.</code>).</td>
+                            </tr>
+                            <tr>
+                                <td><strong style="color: var(--text-primary);">Dirty Only</strong></td>
+                                <td><code>-Dirty</code></td>
+                                <td><code>-d, --dirty</code></td>
+                                <td>Hides clean repositories to focus strictly on pending work.</td>
+                            </tr>
+                            <tr>
+                                <td><strong style="color: var(--text-primary);">Fetch Remotes</strong></td>
+                                <td><code>-Fetch</code></td>
+                                <td><code>-f, --fetch</code></td>
+                                <td>Runs <code>git fetch</code> before checking ahead/behind (needs network).</td>
+                            </tr>
+                            <tr>
+                                <td><strong style="color: var(--text-primary);">Export File</strong></td>
+                                <td><code>-Export &lt;file&gt;</code></td>
+                                <td><code>-o, --output &lt;file&gt;</code></td>
+                                <td>Exports scan results to file (format inferred: <code>.csv</code>, <code>.md</code>, <code>.json</code>).</td>
+                            </tr>
+                            <tr>
+                                <td><strong style="color: var(--text-primary);">Quick Export</strong></td>
+                                <td><code>-Export</code></td>
+                                <td><code>-e, --export</code></td>
+                                <td>Instant export to timestamped CSV (e.g. <code>git-status-report-YYYYMMDD.csv</code>).</td>
+                            </tr>
+                            <tr>
+                                <td><strong style="color: var(--text-primary);">Version</strong></td>
+                                <td><code>-Version, -v</code></td>
+                                <td><code>-v, --version</code></td>
+                                <td>Display version number (<code>v2.0.1</code>) and exit.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Global Alias Section -->
     <section id="alias" class="section">
-        <div class="container">
-            <h2 class="section-title">Setup an Alias</h2>
-            <div class="glass-card problem-card">
-                <div class="card-content">
-                    <h3>Run it from anywhere</h3>
-                    <p>Instead of typing the full path to the script every time, set up an alias in your terminal to run
-                        it with a quick command like <code>gsa</code> (Git Status All).</p>
+        <div class="container guide-container">
+            <div class="section-header">
+                <span class="section-label">Workflow Integration</span>
+                <h2 class="section-title">Run globally with an alias</h2>
+                <p class="section-desc">Create a shorthand alias like <code>gsa</code> to inspect any directory on your computer in seconds.</p>
+            </div>
 
-                    <h4
-                        style="color: var(--accent-blue); margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.1rem;">
-                        PowerShell Profile</h4>
-                    <div class="code-block" style="margin-top: 0.5rem; margin-bottom: 1.5rem;">
-                        <pre><code># Open your profile
-notepad $PROFILE
-
-# Add this function to the file and save
-function gsa { & "C:\path\to\git-status-all.ps1" @args }</code></pre>
+            <div class="alias-grid">
+                <!-- PowerShell Profile -->
+                <div class="alias-card">
+                    <h4>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--brand-cyan);"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+                        PowerShell ($PROFILE)
+                    </h4>
+                    <p>Add to your PowerShell profile to invoke from any directory:</p>
+                    <div class="code-snippet">
+                        <code>function gsa { &amp; "C:\Tools\git-status-all.ps1" @args }</code>
                     </div>
+                </div>
 
-                    <h4 style="color: var(--accent-blue); margin-bottom: 0.5rem; font-size: 1.1rem;">Bash / Zsh (.bashrc
-                        / .zshrc)</h4>
-                    <div class="code-block" style="margin-top: 0.5rem;">
-                        <pre><code># Open your configuration file
-nano ~/.bashrc
-
-# Add this alias to the bottom
-alias gsa='/path/to/git-status-all.sh'</code></pre>
+                <!-- Bash / Zsh Profile -->
+                <div class="alias-card">
+                    <h4>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--brand-mint);"><path d="M4 17l6-6-6-6M12 19h8"></path></svg>
+                        Bash &amp; Zsh (.bashrc / .zshrc)
+                    </h4>
+                    <p>Add to <code>~/.bashrc</code> or <code>~/.zshrc</code> on macOS/Linux:</p>
+                    <div class="code-snippet">
+                        <code>alias gsa='/usr/local/bin/git-status-all.sh'</code>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>git status --all v2.0.1 · Built with ❤️ by <a href="https://www.ashishvishwakarma.com/">AshV</a></p>
+            <div class="footer-nav">
+                <a href="#features">Features</a>
+                <a href="#downloads">Download</a>
+                <a href="#options">Options</a>
+                <a href="#alias">Alias</a>
+                <a href="https://github.com/AshV/git-status-all" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href="https://github.com/AshV/git-status-all/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT License</a>
+            </div>
+            <p>git status --all v2.0.1 · Built with ❤️ by <a href="https://www.ashishvishwakarma.com/" target="_blank" rel="noopener noreferrer">AshV</a></p>
         </div>
     </footer>
 
