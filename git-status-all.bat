@@ -138,7 +138,7 @@ TOTAL=${#GIT_DIRS[@]}
 # ── Scan each repo ───────────────────────────────────────────────────────────
 
 # Parallel arrays to hold results
-declare -a R_NAME R_BRANCH R_MOD R_UNT R_AHEAD R_BEHIND R_STASH R_DIRTY
+declare -a R_NAME R_BRANCH R_MOD R_UNT R_AHEAD R_BEHIND R_STASH R_DIRTY R_STATUS R_STATUS_DISPLAY
 INDEX=0
 
 for git_dir in "${GIT_DIRS[@]}"; do
@@ -195,6 +195,40 @@ for git_dir in "${GIT_DIRS[@]}"; do
     is_dirty=false
     [[ $total_issues -gt 0 ]] && is_dirty=true
 
+    # Semantic status
+    status_label="clean"
+    status_display="${GREEN}✓ clean${RESET}"
+    has_uncommitted=false
+    [[ $((modified + untracked)) -gt 0 ]] && has_uncommitted=true
+
+    if $has_uncommitted; then
+        if [[ $ahead -gt 0 && $behind -gt 0 ]]; then
+            status_label="Uncommitted, Diverged"
+            status_display="${RED}● Uncommitted, Diverged${RESET}"
+        elif [[ $ahead -gt 0 ]]; then
+            status_label="Uncommitted, Unpushed"
+            status_display="${RED}● Uncommitted, Unpushed${RESET}"
+        elif [[ $behind -gt 0 ]]; then
+            status_label="Uncommitted, Behind"
+            status_display="${RED}● Uncommitted, Behind${RESET}"
+        else
+            status_label="Uncommitted"
+            status_display="${RED}● Uncommitted${RESET}"
+        fi
+    elif [[ $ahead -gt 0 && $behind -gt 0 ]]; then
+        status_label="Diverged"
+        status_display="${YELLOW}▲▼ Diverged${RESET}"
+    elif [[ $ahead -gt 0 ]]; then
+        status_label="Unpushed"
+        status_display="${MAGENTA}▲ Unpushed${RESET}"
+    elif [[ $behind -gt 0 ]]; then
+        status_label="Behind"
+        status_display="${CYAN}▼ Behind${RESET}"
+    elif [[ $stashes -gt 0 ]]; then
+        status_label="Stash only"
+        status_display="${YELLOW}◌ Stash only${RESET}"
+    fi
+
     R_NAME+=("$repo_name")
     R_BRANCH+=("$branch")
     R_MOD+=("$modified")
@@ -203,6 +237,8 @@ for git_dir in "${GIT_DIRS[@]}"; do
     R_BEHIND+=("$behind")
     R_STASH+=("$stashes")
     R_DIRTY+=("$is_dirty")
+    R_STATUS+=("$status_label")
+    R_STATUS_DISPLAY+=("$status_display")
 
     popd > /dev/null
 done
@@ -263,7 +299,7 @@ displayed=0
 # Print header
 printf "${CYAN}  %-${max_name}s  %-${max_branch}s  %5s  %5s  %5s  %5s  %5s  %s${RESET}\n" \
     "Repository" "Branch" "Mod" "Unt" "Push" "Pull" "Stash" "Status"
-sep_len=$((max_name + max_branch + 46))
+sep_len=$((max_name + max_branch + 62))
 sep_line=$(printf "%*s" "$sep_len" "" | tr ' ' '─')
 printf "  ${GRAY}%s${RESET}\n" "$sep_line"
 
@@ -299,11 +335,7 @@ for pass in dirty clean; do
         bh=${R_BEHIND[$i]};   [[ $bh      -gt 0 ]] && bh_s="${CYAN}$(printf '%5d' "$bh")${RESET}"         || bh_s="${GRAY}$(printf '%5s' '·')${RESET}"
         st=${R_STASH[$i]};    [[ $st      -gt 0 ]] && st_s="${YELLOW}$(printf '%5d' "$st")${RESET}"        || st_s="${GRAY}$(printf '%5s' '·')${RESET}"
 
-        if $is_dirty; then
-            status_s="${RED}● DIRTY${RESET}"
-        else
-            status_s="${GREEN}✓ clean${RESET}"
-        fi
+        status_s="${R_STATUS_DISPLAY[$i]}"
 
         # Branch color
         if [[ "$branch" == "main" || "$branch" == "master" ]]; then
@@ -353,6 +385,7 @@ export_results() {
   {
     "repository": "${R_NAME[$i]}",
     "branch": "${R_BRANCH[$i]}",
+    "status": "${R_STATUS[$i]}",
     "dirty": ${R_DIRTY[$i]},
     "modified": ${R_MOD[$i]},
     "untracked": ${R_UNT[$i]},
@@ -377,9 +410,12 @@ EOF
                 echo "| Repository | Branch | Status | Mod | Unt | Push | Pull | Stash |"
                 echo "| :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |"
                 for i in "${!R_NAME[@]}"; do
-                    local st="clean"
-                    [[ "${R_DIRTY[$i]}" == "true" ]] && st="DIRTY"
-                    echo "| \`${R_NAME[$i]}\` | \`${R_BRANCH[$i]}\` | **$st** | ${R_MOD[$i]} | ${R_UNT[$i]} | ${R_AHEAD[$i]} | ${R_BEHIND[$i]} | ${R_STASH[$i]} |"
+                    local st="${R_STATUS[$i]}"
+                    if [[ "${R_DIRTY[$i]}" == "true" ]]; then
+                        echo "| \`${R_NAME[$i]}\` | \`${R_BRANCH[$i]}\` | **$st** | ${R_MOD[$i]} | ${R_UNT[$i]} | ${R_AHEAD[$i]} | ${R_BEHIND[$i]} | ${R_STASH[$i]} |"
+                    else
+                        echo "| \`${R_NAME[$i]}\` | \`${R_BRANCH[$i]}\` | $st | ${R_MOD[$i]} | ${R_UNT[$i]} | ${R_AHEAD[$i]} | ${R_BEHIND[$i]} | ${R_STASH[$i]} |"
+                    fi
                 done
                 echo ""
                 echo "_Built with ❤️ by AshV_"
@@ -391,8 +427,7 @@ EOF
             {
                 echo "Repository,Branch,Status,Modified,Untracked,Unpushed,Unpulled,Stashes"
                 for i in "${!R_NAME[@]}"; do
-                    local st="clean"
-                    [[ "${R_DIRTY[$i]}" == "true" ]] && st="DIRTY"
+                    local st="${R_STATUS[$i]}"
                     echo "\"${R_NAME[$i]}\",\"${R_BRANCH[$i]}\",\"$st\",${R_MOD[$i]},${R_UNT[$i]},${R_AHEAD[$i]},${R_BEHIND[$i]},${R_STASH[$i]}"
                 done
             } > "$target_file"

@@ -80,11 +80,11 @@
                     <span class="dot green"></span>
                 </div>
                 <div class="terminal-body">
-                    <p><span class="prompt">></span> ./git-status-all.ps1 -Directory "C:\Projects"</p>
+                    <p><span class="prompt">></span> .\git-status-all.ps1 -Path "C:\Projects"</p>
                     <p class="success">Scanning 15 repositories...</p>
-                    <p>📦 Repo1 - <span class="warning">Modified (3 files)</span></p>
-                    <p>📦 Repo2 - <span class="success">Clean</span></p>
-                    <p>📦 Repo3 - <span class="error">Unpushed Commits (2)</span></p>
+                    <p>📦 Repo1 - <span class="error">● Uncommitted, Unpushed</span></p>
+                    <p>📦 Repo2 - <span class="warning">▲ Unpushed (2 commits)</span></p>
+                    <p>📦 Repo3 - <span class="success">✓ Clean</span></p>
                     <p class="success">Completed in 1.2s</p>
                 </div>
             </div>
@@ -125,8 +125,8 @@
                 </div>
                 <div class="glass-card feature-card">
                     <div class="feature-icon">🎨</div>
-                    <h3>Colorful Output</h3>
-                    <p>Visual cues and color-coded output make it easy to spot dirty repositories at a glance.</p>
+                    <h3>Semantic Status Indicators</h3>
+                    <p>More than just "dirty" — instantly see if you need to commit, push, pull, or check stashed work.</p>
                 </div>
 
                 <div class="glass-card feature-card">

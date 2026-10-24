@@ -64,7 +64,47 @@ function Get-AnsiColor {
     }
 }
 
-$R = Get-AnsiColor "Reset"
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
+
+$IconClean   = [char]0x2713 # ✓
+$IconCircle  = [char]0x25CF # ●
+$IconUp      = [char]0x25B2 # ▲
+$IconDown    = [char]0x25BC # ▼
+$IconStash   = [char]0x25CC # ◌
+$CharDash    = [char]0x2500 # ─
+
+function Get-SemanticStatus {
+    param(
+        [int]$Modified,
+        [int]$Untracked,
+        [int]$Ahead,
+        [int]$Behind,
+        [int]$Stashes
+    )
+    $hasUncommitted = ($Modified + $Untracked) -gt 0
+    if ($hasUncommitted) {
+        if ($Ahead -gt 0 -and $Behind -gt 0) {
+            return @{ Label = "Uncommitted, Diverged"; Display = "$(Get-AnsiColor 'Red')$IconCircle Uncommitted, Diverged$R" }
+        } elseif ($Ahead -gt 0) {
+            return @{ Label = "Uncommitted, Unpushed"; Display = "$(Get-AnsiColor 'Red')$IconCircle Uncommitted, Unpushed$R" }
+        } elseif ($Behind -gt 0) {
+            return @{ Label = "Uncommitted, Behind"; Display = "$(Get-AnsiColor 'Red')$IconCircle Uncommitted, Behind$R" }
+        } else {
+            return @{ Label = "Uncommitted"; Display = "$(Get-AnsiColor 'Red')$IconCircle Uncommitted$R" }
+        }
+    } elseif ($Ahead -gt 0 -and $Behind -gt 0) {
+        return @{ Label = "Diverged"; Display = "$(Get-AnsiColor 'Yellow')$IconUp$IconDown Diverged$R" }
+    } elseif ($Ahead -gt 0) {
+        return @{ Label = "Unpushed"; Display = "$(Get-AnsiColor 'Magenta')$IconUp Unpushed$R" }
+    } elseif ($Behind -gt 0) {
+        return @{ Label = "Behind"; Display = "$(Get-AnsiColor 'Cyan')$IconDown Behind$R" }
+    } elseif ($Stashes -gt 0) {
+        return @{ Label = "Stash only"; Display = "$(Get-AnsiColor 'Yellow')$IconStash Stash only$R" }
+    } else {
+        return @{ Label = "clean"; Display = "$(Get-AnsiColor 'Green')$IconClean clean$R" }
+    }
+}
 
 function Write-Header {
     Write-Host ""
@@ -153,17 +193,20 @@ foreach ($gitDir in $gitDirs) {
 
         # Determine overall status
         $isDirty = ($modified + $untracked + $ahead + $behind + $stashes) -gt 0
+        $statusInfo = Get-SemanticStatus -Modified $modified -Untracked $untracked -Ahead $ahead -Behind $behind -Stashes $stashes
 
         $results += [PSCustomObject]@{
-            Name      = $repoName
-            Branch    = $branch
-            Modified  = $modified
-            Untracked = $untracked
-            Ahead     = $ahead
-            Behind    = $behind
-            Stashes   = $stashes
-            IsDirty   = $isDirty
-            Path      = $repoPath
+            Name          = $repoName
+            Branch        = $branch
+            Modified      = $modified
+            Untracked     = $untracked
+            Ahead         = $ahead
+            Behind        = $behind
+            Stashes       = $stashes
+            IsDirty       = $isDirty
+            Status        = $statusInfo.Label
+            StatusDisplay = $statusInfo.Display
+            Path          = $repoPath
         }
     }
     finally {
@@ -209,7 +252,9 @@ if ($displayResults.Count -eq 0) {
     $headerFmt = "  {0,-$nameWidth}  {1,-$branchWidth}  {2,5}  {3,5}  {4,5}  {5,5}  {6,5}  {7}"
     $header = $headerFmt -f "Repository", "Branch", "Mod", "Unt", "Push", "Pull", "Stash", "Status"
     Write-Host "$(Get-AnsiColor 'Cyan')$header$R"
-    Write-Host "$(Get-AnsiColor 'Gray')  $("─" * ($nameWidth + $branchWidth + 46))$R"
+    $maxStatusLen = [Math]::Max(($displayResults | ForEach-Object { $_.Status.Length } | Measure-Object -Maximum).Maximum + 2, 8)
+    $dividerLen = [Math]::Max($nameWidth + $branchWidth + 37 + $maxStatusLen, 70)
+    Write-Host "$(Get-AnsiColor 'Gray')  $("$CharDash" * $dividerLen)$R"
 
     foreach ($repo in $displayResults | Sort-Object -Property IsDirty -Descending) {
         $name   = if ($repo.Name.Length -gt $nameWidth) { $repo.Name.Substring(0, $nameWidth - 1) + "…" } else { $repo.Name }
@@ -223,11 +268,7 @@ if ($displayResults.Count -eq 0) {
         $stashStr   = if ($repo.Stashes   -gt 0) { "$(Get-AnsiColor 'Yellow')$("{0,5}" -f $repo.Stashes)$R"   } else { "$(Get-AnsiColor 'Gray')$("{0,5}" -f '·')$R" }
 
         # Status label
-        if ($repo.IsDirty) {
-            $statusStr = "$(Get-AnsiColor 'Red')● DIRTY$R"
-        } else {
-            $statusStr = "$(Get-AnsiColor 'Green')✓ clean$R"
-        }
+        $statusStr = $repo.StatusDisplay
 
         $branchColor = if ($repo.Branch -eq "main" -or $repo.Branch -eq "master") { Get-AnsiColor 'Green' } else { Get-AnsiColor 'Yellow' }
 
@@ -259,7 +300,7 @@ function Export-ScanReport {
     $ext = [System.IO.Path]::GetExtension($FilePath).ToLower()
     switch ($ext) {
         ".json" {
-            $results | Select-Object Name, Branch, IsDirty, Modified, Untracked, Ahead, Behind, Stashes, Path |
+            $results | Select-Object Name, Branch, IsDirty, Status, Modified, Untracked, Ahead, Behind, Stashes, Path |
                 ConvertTo-Json -Depth 2 | Set-Content -Path $FilePath -Encoding UTF8
         }
         ".md" {
@@ -273,7 +314,7 @@ function Export-ScanReport {
             [void]$sb.AppendLine("| Repository | Branch | Status | Mod | Unt | Push | Pull | Stash |")
             [void]$sb.AppendLine("| :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |")
             foreach ($repoItem in ($results | Sort-Object -Property IsDirty -Descending)) {
-                $st = if ($repoItem.IsDirty) { "**DIRTY**" } else { "clean" }
+                $st = if ($repoItem.IsDirty) { "**$($repoItem.Status)**" } else { "clean" }
                 [void]$sb.AppendLine("| ``$($repoItem.Name)`` | ``$($repoItem.Branch)`` | $st | $($repoItem.Modified) | $($repoItem.Untracked) | $($repoItem.Ahead) | $($repoItem.Behind) | $($repoItem.Stashes) |")
             }
             [void]$sb.AppendLine("")
@@ -281,7 +322,7 @@ function Export-ScanReport {
             $sb.ToString() | Set-Content -Path $FilePath -Encoding UTF8
         }
         default {
-            $results | Select-Object @{N="Repository";E={$_.Name}}, Branch, @{N="Status";E={if ($_.IsDirty){"DIRTY"}else{"clean"}}}, Modified, Untracked, @{N="Unpushed";E={$_.Ahead}}, @{N="Unpulled";E={$_.Behind}}, Stashes, Path |
+            $results | Select-Object @{N="Repository";E={$_.Name}}, Branch, Status, Modified, Untracked, @{N="Unpushed";E={$_.Ahead}}, @{N="Unpulled";E={$_.Behind}}, Stashes, Path |
                 Export-Csv -Path $FilePath -NoTypeInformation -Encoding UTF8
         }
     }

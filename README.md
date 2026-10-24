@@ -82,10 +82,10 @@ chmod +x git-status-all.sh
   Scanning: D:\Projects
 
   Repository          Branch        Mod    Unt   Push   Pull  Stash  Status
-  ─────────────────────────────────────────────────────────────────────────
-  my-web-app          main            3      1      2      ·      ·  ● DIRTY
-  api-server          feature/auth    ·      ·      5      ·      ·  ● DIRTY
-  docs-site           main            ·      ·      ·      ·      1  ● DIRTY
+  ──────────────────────────────────────────────────────────────────────────────────────────
+  my-web-app          main            3      1      2      ·      ·  ● Uncommitted, Unpushed
+  api-server          feature/auth    ·      ·      5      ·      ·  ▲ Unpushed
+  docs-site           main            ·      ·      ·      ·      1  ◌ Stash only
   utils-lib           main            ·      ·      ·      ·      ·  ✓ clean
 
   ─────────────────────────────────────────
@@ -93,6 +93,18 @@ chmod +x git-status-all.sh
 
   Built with ❤️ by AshV
 ```
+
+### Status Indicators
+
+| Status | Meaning | Action Needed |
+| :--- | :--- | :--- |
+| `● Uncommitted, Unpushed` | Local edits AND unpushed commits | Commit changes & push |
+| `● Uncommitted` | Staged/unstaged edits or untracked files | Review & commit |
+| `▲ Unpushed` | Working tree clean, but local commits not pushed | `git push` |
+| `▼ Behind` | Remote has new commits | `git pull` |
+| `▲▼ Diverged` | Both ahead of and behind remote | Merge or rebase |
+| `◌ Stash only` | Working tree clean, only stashes exist | Review stashes |
+| `✓ clean` | In sync with remote, clean working tree | None |
 
 ## Options
 
