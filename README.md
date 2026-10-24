@@ -49,6 +49,10 @@ git-status-all.bat "D:\Projects"
 git-status-all.bat -d "D:\Projects"
 ```
 
+### macOS Double-Click (.command)
+
+Double-click `git-status-all.command` directly from Finder to launch the scan in Terminal.
+
 ### Bash (Linux / macOS / Git Bash / WSL)
 
 ```bash
