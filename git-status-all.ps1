@@ -53,7 +53,7 @@ param(
     [switch]$Version
 )
 
-$APP_VERSION = "2.0.0"
+$APP_VERSION = "2.0.1"
 
 if ($Version) {
     Write-Host "git status --all v$APP_VERSION"
@@ -62,18 +62,21 @@ if ($Version) {
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
+$ESC = [char]27
+$R   = "$([char]27)[0m"
+
 function Get-AnsiColor {
     param([string]$Color)
     switch ($Color) {
-        "Red"     { "`e[91m" }
-        "Yellow"  { "`e[93m" }
-        "Green"   { "`e[92m" }
-        "Cyan"    { "`e[96m" }
-        "Magenta" { "`e[95m" }
-        "Gray"    { "`e[90m" }
-        "White"   { "`e[97m" }
-        "Reset"   { "`e[0m"  }
-        default   { ""       }
+        "Red"     { "$([char]27)[91m" }
+        "Yellow"  { "$([char]27)[93m" }
+        "Green"   { "$([char]27)[92m" }
+        "Cyan"    { "$([char]27)[96m" }
+        "Magenta" { "$([char]27)[95m" }
+        "Gray"    { "$([char]27)[90m" }
+        "White"   { "$([char]27)[97m" }
+        "Reset"   { "$([char]27)[0m"  }
+        default   { ""                }
     }
 }
 

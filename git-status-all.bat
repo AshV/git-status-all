@@ -63,7 +63,7 @@ get_time_ms() {
 
 # ── Arguments ────────────────────────────────────────────────────────────────
 
-VERSION="2.0.0"
+VERSION="2.0.1"
 SCAN_PATH="."
 DIRTY_ONLY=false
 DO_FETCH=false
@@ -476,11 +476,11 @@ REM Bash never reaches here (exit 0 above). cmd.exe GOTOs here from line 3.
 @echo off
 
 if "%~1"=="-v" (
-    echo git status --all v2.0.0
+    echo git status --all v2.0.1
     exit /b 0
 )
 if "%~1"=="--version" (
-    echo git status --all v2.0.0
+    echo git status --all v2.0.1
     exit /b 0
 )
 

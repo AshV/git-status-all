@@ -61,7 +61,7 @@ get_time_ms() {
 
 # ── Arguments ────────────────────────────────────────────────────────────────
 
-VERSION="2.0.0"
+VERSION="2.0.1"
 SCAN_PATH="."
 DIRTY_ONLY=false
 DO_FETCH=false
