@@ -27,6 +27,9 @@
 .PARAMETER Export
     Export results to a file (.csv, .md, .json). Defaults to CSV.
 
+.PARAMETER Version
+    Show version information and exit.
+
 .EXAMPLE
     .\git-status-all.ps1
     .\git-status-all.ps1 -Path "D:\Projects" -Dirty
@@ -44,8 +47,18 @@ param(
     [switch]$Fetch,
 
     [Alias("Output")]
-    [string]$Export
+    [string]$Export,
+
+    [Alias("v")]
+    [switch]$Version
 )
+
+$APP_VERSION = "2.0.0"
+
+if ($Version) {
+    Write-Host "git status --all v$APP_VERSION"
+    exit 0
+}
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -109,7 +122,7 @@ function Get-SemanticStatus {
 function Write-Header {
     Write-Host ""
     Write-Host "$(Get-AnsiColor 'Cyan')  ╔══════════════════════════════════════════════════╗$R"
-    Write-Host "$(Get-AnsiColor 'Cyan')  ║$(Get-AnsiColor 'White')         git status --all  ·  Status Report       $(Get-AnsiColor 'Cyan')║$R"
+    Write-Host "$(Get-AnsiColor 'Cyan')  ║$(Get-AnsiColor 'White')    git status --all v$APP_VERSION  ·  Status Report    $(Get-AnsiColor 'Cyan')║$R"
     Write-Host "$(Get-AnsiColor 'Cyan')  ╚══════════════════════════════════════════════════╝$R"
     Write-Host ""
 }
@@ -291,7 +304,7 @@ Write-Host "  $(Get-AnsiColor 'Gray')Legend: Mod=Modified  Unt=Untracked  Push=U
 Write-Host "  $(Get-AnsiColor 'Gray')  Use -Dirty to show only repos needing attention$R"
 Write-Host "  $(Get-AnsiColor 'Gray')  Use -Fetch to refresh remote status (needs network)$R"
 Write-Host ""
-Write-Host "  $(Get-AnsiColor 'Gray')Built with ❤️ by AshV$R"
+Write-Host "  $(Get-AnsiColor 'Gray')git status --all v$APP_VERSION · Built with ❤️ by AshV$R"
 
 # ── Export Function ──────────────────────────────────────────────────────────
 
@@ -318,7 +331,7 @@ function Export-ScanReport {
                 [void]$sb.AppendLine("| ``$($repoItem.Name)`` | ``$($repoItem.Branch)`` | $st | $($repoItem.Modified) | $($repoItem.Untracked) | $($repoItem.Ahead) | $($repoItem.Behind) | $($repoItem.Stashes) |")
             }
             [void]$sb.AppendLine("")
-            [void]$sb.AppendLine("_Built with ❤️ by AshV_")
+            [void]$sb.AppendLine("_git status --all v$APP_VERSION · Built with ❤️ by AshV_")
             $sb.ToString() | Set-Content -Path $FilePath -Encoding UTF8
         }
         default {

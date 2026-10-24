@@ -1,5 +1,8 @@
 # 🔍 git status -all - Multi-Repo Status Scanner
 
+[![Version](https://img.shields.io/badge/version-v2.0.0-00ff88?style=flat-square)](https://github.com/AshV/git-status-all)
+[![License: MIT](https://img.shields.io/badge/License-MIT-00b8ff?style=flat-square)](LICENSE)
+
 Quickly check **all** Git repositories under a folder for pending work —
 uncommitted changes, untracked files, unpushed/unpulled commits, and stashes.
 
@@ -84,7 +87,7 @@ chmod +x git-status-all.sh
 
 ```
   ╔══════════════════════════════════════════════════╗
-  ║         git status --all  ·  Status Report        ║
+  ║    git status --all v2.0.0  ·  Status Report     ║
   ╚══════════════════════════════════════════════════╝
 
   Scanning: D:\Projects
@@ -99,7 +102,7 @@ chmod +x git-status-all.sh
   ─────────────────────────────────────────
   Total: 4  │  Dirty: 3  │  Clean: 1  │  Time: 1.4s
 
-  Built with ❤️ by AshV
+  git status --all v2.0.0 · Built with ❤️ by AshV
 ```
 
 ### Status Indicators
@@ -123,6 +126,7 @@ chmod +x git-status-all.sh
 | **Fetch remotes** | `-Fetch` | `-f, --fetch` | Run `git fetch` first (slower, hits remotes) |
 | **Export report** | `-Export <file>` | `-o, --output <file>` | Export results to file (`.csv`, `.md`, `.json`) |
 | **Quick export** | `-Export` | `-e, --export` | Quick export to timestamped CSV (`git-status-report-YYYYMMDD-HHmmss.csv`) |
+| **Version** | `-Version, -v` | `-v, --version` | Display version number (`v2.0.0`) and exit |
 
 > [!TIP]
 > **Interactive Export**: When running without export flags, the prompt at the end lets you press **`e`** to instantly save `git-status-report-YYYYMMDD-HHmmss.csv`!

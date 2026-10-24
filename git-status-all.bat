@@ -21,6 +21,7 @@ BATCH_HEADER
 #   -f, --fetch         Run 'git fetch' before checking ahead/behind (slower, needs network)
 #   -o, --output FILE   Export report to FILE (.csv, .md, .json)
 #   -e, --export [FILE] Export report (defaults to git-status-report.csv)
+#   -v, --version       Show version number
 #   -h, --help          Show this help message
 #
 
@@ -62,6 +63,7 @@ get_time_ms() {
 
 # ── Arguments ────────────────────────────────────────────────────────────────
 
+VERSION="2.0.0"
 SCAN_PATH="."
 DIRTY_ONLY=false
 DO_FETCH=false
@@ -82,8 +84,12 @@ while [[ $# -gt 0 ]]; do
                 EXPORT_FILE="DEFAULT"; shift
             fi
             ;;
+        -v|--version)
+            echo "git status --all v$VERSION"
+            exit 0
+            ;;
         -h|--help)
-            head -22 "$0" | tail -18
+            head -24 "$0" | tail -20
             exit 0
             ;;
         *)
@@ -103,7 +109,7 @@ SCAN_PATH="$(cd "$SCAN_PATH" && pwd)"
 
 echo ""
 echo -e "${CYAN}  ╔══════════════════════════════════════════════════╗${RESET}"
-echo -e "${CYAN}  ║${WHITE}         git status --all  ·  Status Report       ${CYAN}║${RESET}"
+echo -e "${CYAN}  ║${WHITE}    git status --all v${VERSION}  ·  Status Report    ${CYAN}║${RESET}"
 echo -e "${CYAN}  ╚══════════════════════════════════════════════════╝${RESET}"
 echo ""
 echo -e "  ${GRAY}Scanning:${RESET} ${SCAN_PATH}"
@@ -364,7 +370,7 @@ echo -e "  ${GRAY}Legend: Mod=Modified  Unt=Untracked  Push=Unpushed  Pull=Unpul
 echo -e "  ${GRAY}  Use -d/--dirty to show only repos needing attention${RESET}"
 echo -e "  ${GRAY}  Use -f/--fetch to refresh remote status (needs network)${RESET}"
 echo ""
-echo -e "  ${GRAY}Built with ❤️ by AshV${RESET}"
+echo -e "  ${GRAY}git status --all v${VERSION} · Built with ❤️ by AshV${RESET}"
 
 # ── Export Helper ────────────────────────────────────────────────────────────
 
@@ -418,7 +424,7 @@ EOF
                     fi
                 done
                 echo ""
-                echo "_Built with ❤️ by AshV_"
+                echo "_git status --all v${VERSION} · Built with ❤️ by AshV_"
             } > "$target_file"
             ;;
 
@@ -468,6 +474,15 @@ REM ── Windows Batch section ───────────────�
 REM Bash never reaches here (exit 0 above). cmd.exe GOTOs here from line 3.
 :BATCH
 @echo off
+
+if "%~1"=="-v" (
+    echo git status --all v2.0.0
+    exit /b 0
+)
+if "%~1"=="--version" (
+    echo git status --all v2.0.0
+    exit /b 0
+)
 
 set "BASH_EXE="
 if exist "%ProgramFiles%\Git\bin\bash.exe" set "BASH_EXE=%ProgramFiles%\Git\bin\bash.exe"
