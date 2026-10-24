@@ -15,3 +15,18 @@ function showTab(tabId) {
     document.getElementById(tabId).classList.add('active');
     event.currentTarget.classList.add('active');
 }
+
+function copyCommand(text, btnElement) {
+    navigator.clipboard.writeText(text).then(() => {
+        const originalText = btnElement.innerText;
+        btnElement.innerText = "Copied!";
+        btnElement.classList.add("copied");
+        setTimeout(() => {
+            btnElement.innerText = originalText;
+            btnElement.classList.remove("copied");
+        }, 2000);
+    }).catch(err => {
+        console.error("Failed to copy:", err);
+    });
+}
+

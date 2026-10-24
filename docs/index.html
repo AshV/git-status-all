@@ -54,6 +54,7 @@
                 <span class="nav-title">git status -all</span>
             </div>
             <div class="nav-links">
+                <a href="#downloads">Download</a>
                 <a href="#problem">The Problem</a>
                 <a href="#features">Features</a>
                 <a href="#guide">User Guide</a>
@@ -70,8 +71,8 @@
             <p class="hero-subtitle">Instantly scan directories, find uncommitted changes, unpushed commits, and manage
                 all your repos from a single command.</p>
             <div class="hero-actions">
-                <a href="#guide" class="btn btn-primary">Get Started</a>
-                <a href="#features" class="btn btn-secondary">Explore Features</a>
+                <a href="#downloads" class="btn btn-primary">Download Scripts</a>
+                <a href="#guide" class="btn btn-secondary">User Guide</a>
             </div>
             <div class="terminal-mockup">
                 <div class="terminal-header">
@@ -90,6 +91,96 @@
             </div>
         </div>
     </header>
+
+    <section id="downloads" class="section">
+        <div class="container">
+            <h2 class="section-title">Download Standalone Scripts</h2>
+            <p style="text-align: center; color: var(--text-secondary); max-width: 650px; margin: -1.5rem auto 2.5rem; font-size: 1.1rem;">
+                Each script is 100% self-sufficient. Download only the single file you need for your platform — zero dependencies required.
+            </p>
+            <div class="downloads-grid">
+                <!-- PowerShell -->
+                <div class="glass-card download-card">
+                    <div>
+                        <span class="download-badge badge-recommended">Windows · Recommended</span>
+                        <div class="download-icon">⚡</div>
+                        <h3 class="download-title">git-status-all.ps1</h3>
+                        <p class="download-platform">PowerShell 5.1+ / PowerShell 7+ on Windows</p>
+                        <p class="download-desc">Blazing fast multi-repo scanner tailored for Windows. Features native ANSI colors, semantic status badges, and multi-format export.</p>
+                    </div>
+                    <div class="download-actions">
+                        <a href="https://github.com/AshV/git-status-all/raw/main/git-status-all.ps1" download="git-status-all.ps1" class="btn btn-primary btn-download">
+                            ⬇ Download .ps1
+                        </a>
+                        <div class="cli-copy-box">
+                            <code>irm https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.ps1 -OutFile git-status-all.ps1</code>
+                            <button class="copy-mini-btn" onclick="copyCommand('irm https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.ps1 -OutFile git-status-all.ps1', this)">Copy</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- macOS Double-Click -->
+                <div class="glass-card download-card">
+                    <div>
+                        <span class="download-badge badge-macos">macOS · Finder</span>
+                        <div class="download-icon">🍎</div>
+                        <h3 class="download-title">git-status-all.command</h3>
+                        <p class="download-platform">macOS 10.15+ (Catalina, Sonoma, Sequoia)</p>
+                        <p class="download-desc">Self-contained double-click script for macOS Finder. Automatically runs in its target directory and launches Terminal.</p>
+                    </div>
+                    <div class="download-actions">
+                        <a href="https://github.com/AshV/git-status-all/raw/main/git-status-all.command" download="git-status-all.command" class="btn btn-primary btn-download">
+                            ⬇ Download .command
+                        </a>
+                        <div class="cli-copy-box">
+                            <code>curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.command && chmod +x git-status-all.command</code>
+                            <button class="copy-mini-btn" onclick="copyCommand('curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.command && chmod +x git-status-all.command', this)">Copy</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bash (.sh) -->
+                <div class="glass-card download-card">
+                    <div>
+                        <span class="download-badge badge-bash">Linux · Unix · WSL</span>
+                        <div class="download-icon">🐧</div>
+                        <h3 class="download-title">git-status-all.sh</h3>
+                        <p class="download-platform">Linux, macOS Terminal, WSL, Git Bash</p>
+                        <p class="download-desc">Universal POSIX Bash script for terminals, servers, and CI/CD pipelines. Fast scanning with comprehensive status indicators.</p>
+                    </div>
+                    <div class="download-actions">
+                        <a href="https://github.com/AshV/git-status-all/raw/main/git-status-all.sh" download="git-status-all.sh" class="btn btn-primary btn-download">
+                            ⬇ Download .sh
+                        </a>
+                        <div class="cli-copy-box">
+                            <code>curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.sh && chmod +x git-status-all.sh</code>
+                            <button class="copy-mini-btn" onclick="copyCommand('curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.sh && chmod +x git-status-all.sh', this)">Copy</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Windows Batch (.bat) -->
+                <div class="glass-card download-card">
+                    <div>
+                        <span class="download-badge badge-batch">Windows · CMD / Explorer</span>
+                        <div class="download-icon">🪟</div>
+                        <h3 class="download-title">git-status-all.bat</h3>
+                        <p class="download-platform">Windows Explorer Double-Click or CMD</p>
+                        <p class="download-desc">Polyglot script that runs natively from cmd.exe or via double-click in File Explorer using Git Bash.</p>
+                    </div>
+                    <div class="download-actions">
+                        <a href="https://github.com/AshV/git-status-all/raw/main/git-status-all.bat" download="git-status-all.bat" class="btn btn-primary btn-download">
+                            ⬇ Download .bat
+                        </a>
+                        <div class="cli-copy-box">
+                            <code>curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.bat</code>
+                            <button class="copy-mini-btn" onclick="copyCommand('curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.bat', this)">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <section id="problem" class="section">
         <div class="container">
@@ -145,6 +236,7 @@
             <div class="glass-card guide-card">
                 <div class="tabs">
                     <button class="tab-btn active" onclick="showTab('powershell')">PowerShell (Recommended)</button>
+                    <button class="tab-btn" onclick="showTab('macos')">macOS (.command)</button>
                     <button class="tab-btn" onclick="showTab('bash')">Bash (.sh)</button>
                     <button class="tab-btn" onclick="showTab('batch')">Batch (.bat)</button>
                 </div>
@@ -157,19 +249,40 @@
 .\git-status-all.ps1
 
 # Scan a specific directory
-.\git-status-all.ps1 -Directory "C:\MyProjects"
+.\git-status-all.ps1 -Path "C:\MyProjects"
 
-# Export results to Markdown
-.\git-status-all.ps1 -Export md
+# Show dirty repos only
+.\git-status-all.ps1 -Dirty
 
-# Export results to JSON and CSV
-.\git-status-all.ps1 -Export json,csv</code></pre>
+# Fetch remotes first
+.\git-status-all.ps1 -Fetch -Dirty
+
+# Export results to Markdown, CSV, or JSON
+.\git-status-all.ps1 -Export md</code></pre>
+                    </div>
+                </div>
+
+                <div id="macos" class="tab-content">
+                    <h3>Running on macOS (Double-Click / Terminal)</h3>
+                    <p>Self-contained script tailored for macOS. Double-click <code>git-status-all.command</code> directly from Finder, or run in Terminal.</p>
+                    <div class="code-block">
+                        <pre><code># Make executable (first time only)
+chmod +x git-status-all.command
+
+# Double-click git-status-all.command in Finder, or run in Terminal:
+./git-status-all.command
+
+# Scan a specific directory
+./git-status-all.command ~/Projects
+
+# Show dirty repos only
+./git-status-all.command -d ~/Projects</code></pre>
                     </div>
                 </div>
 
                 <div id="bash" class="tab-content">
                     <h3>Running on Linux/macOS (Bash)</h3>
-                    <p>Use the bash script for a fast, Unix-friendly experience. On macOS, you can also double-click <code>git-status-all.command</code> directly from Finder.</p>
+                    <p>Universal Bash script for any Unix environment or CI/CD.</p>
                     <div class="code-block">
                         <pre><code># Make it executable
 chmod +x git-status-all.sh
