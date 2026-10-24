@@ -41,7 +41,7 @@
 </head>
 
 <body>
-    <!-- Background Effects -->
+    <!-- Ambient Background Effects -->
     <div class="background-effects" aria-hidden="true">
         <div class="glow-orb orb-1"></div>
         <div class="glow-orb orb-2"></div>
@@ -56,18 +56,33 @@
                 <span class="nav-title">git status -all</span>
                 <span class="nav-version">v2.0.1</span>
             </a>
-            <div class="nav-links">
-                <a href="#features">Features</a>
-                <a href="#downloads">Download</a>
-                <a href="#options">Options</a>
-                <a href="#alias">Setup Alias</a>
+
+            <!-- Navigation Links (Responsive Desktop & Mobile Drawer) -->
+            <div class="nav-links" id="nav-links">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#downloads" class="nav-link">Download</a>
+                <a href="#options" class="nav-link">Options</a>
+                <a href="#alias" class="nav-link">Setup Alias</a>
                 <a href="https://github.com/AshV/git-status-all" class="btn btn-outline btn-sm" target="_blank" rel="noopener noreferrer">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                     </svg>
-                    Star on GitHub
+                    <span>Star on GitHub</span>
                 </a>
             </div>
+
+            <!-- Mobile Hamburger Toggle -->
+            <button class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Toggle navigation menu" onclick="toggleMobileMenu()">
+                <svg class="icon-menu" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+                <svg class="icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
         </div>
     </nav>
 
@@ -92,61 +107,62 @@
                         <polyline points="7 10 12 15 17 10"></polyline>
                         <line x1="12" y1="15" x2="12" y2="3"></line>
                     </svg>
-                    Get Standalone Script
+                    <span>Get Standalone Script</span>
                 </a>
                 <a href="https://github.com/AshV/git-status-all" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
                     </svg>
-                    View Source
+                    <span>View Source</span>
                 </a>
             </div>
 
-            <!-- Quick CLI Bar -->
+            <!-- Quick CLI Run Bar -->
             <div class="hero-cli-bar">
-                <span class="hero-cli-prompt">&gt;</span>
-                <code>irm https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.ps1 | iex</code>
-                <button class="copy-btn" id="btn-hero-copy" onclick="copyCommand('irm https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.ps1 | iex', this)" aria-label="Copy PowerShell quick run command">
+                <div class="hero-cli-content">
+                    <span class="hero-cli-prompt">&gt;</span>
+                    <code title="irm https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.ps1 | iex">irm https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.ps1 | iex</code>
+                </div>
+                <button class="copy-btn" id="btn-hero-copy" onclick="copyCommand('irm https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.ps1 | iex', this)" aria-label="Copy PowerShell run command">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                     </svg>
-                    Copy
+                    <span>Copy</span>
                 </button>
             </div>
 
-            <!-- Authentic Terminal Window Preview -->
+            <!-- Authentic ANSI Terminal Preview (Standardized 66-char width for perfect alignment) -->
             <div class="terminal-wrapper">
                 <div class="terminal-mockup">
                     <div class="terminal-header">
-                        <div class="terminal-controls">
-                            <span class="dot red"></span>
-                            <span class="dot yellow"></span>
-                            <span class="dot green"></span>
+                        <div class="terminal-left">
+                            <div class="terminal-controls">
+                                <span class="dot red"></span>
+                                <span class="dot yellow"></span>
+                                <span class="dot green"></span>
+                            </div>
+                            <span class="terminal-title">git-status-all — Terminal</span>
                         </div>
-                        <div class="terminal-title">
-                            <span>git-status-all — Terminal</span>
-                        </div>
-                        <div style="display: flex; gap: 0.4rem;">
-                            <button class="copy-btn term-filter-btn active" onclick="setTerminalFilter('all', this)" style="padding: 0.2rem 0.6rem; font-size: 0.72rem;">All Repos</button>
-                            <button class="copy-btn term-filter-btn" onclick="setTerminalFilter('dirty', this)" style="padding: 0.2rem 0.6rem; font-size: 0.72rem;">-Dirty Only</button>
+                        <div class="terminal-actions">
+                            <button class="copy-btn term-filter-btn active" onclick="setTerminalFilter('all', this)">All Repos</button>
+                            <button class="copy-btn term-filter-btn" onclick="setTerminalFilter('dirty', this)">-Dirty Only</button>
                         </div>
                     </div>
                     <div class="terminal-body" id="terminal-content">
-                        <pre>  <span class="t-cyan">╔══════════════════════════════════════════════════╗</span>
-  <span class="t-cyan">║</span><span class="t-white">    git status --all v2.0.1  ·  Status Report    </span><span class="t-cyan">║</span>
-  <span class="t-cyan">╚══════════════════════════════════════════════════╝</span>
+                        <pre>  <span class="t-cyan">╔══════════════════════════════════════════════════════════════════╗</span>
+  <span class="t-cyan">║</span><span class="t-white">            git status --all v2.0.1  ·  Status Report             </span><span class="t-cyan">║</span>
+  <span class="t-cyan">╚══════════════════════════════════════════════════════════════════╝</span>
 
   <span class="t-gray">Scanning:</span> D:\Projects
 
-  <span class="t-cyan">Repository          Branch        Mod    Unt   Push   Pull  Stash  Status</span>
-  <span class="t-gray">──────────────────────────────────────────────────────────────────────────────────────────</span>
-  my-web-app          <span class="t-yellow">main</span>            <span class="t-red">  3</span>    <span class="t-yellow">  1</span>    <span class="t-magenta">  2</span>    <span class="t-gray">  ·</span>    <span class="t-gray">  ·</span>  <span class="t-red">● Uncommitted, Unpushed</span>
-  api-server          <span class="t-yellow">feature/auth</span>    <span class="t-gray">  ·</span>    <span class="t-gray">  ·</span>    <span class="t-magenta">  5</span>    <span class="t-gray">  ·</span>    <span class="t-gray">  ·</span>  <span class="t-magenta">▲ Unpushed</span>
-  docs-site           <span class="t-green">main</span>            <span class="t-gray">  ·</span>    <span class="t-gray">  ·</span>    <span class="t-gray">  ·</span>    <span class="t-gray">  ·</span>    <span class="t-yellow">  1</span>  <span class="t-yellow">◌ Stash only</span>
-  utils-lib           <span class="t-green">main</span>            <span class="t-gray">  ·</span>    <span class="t-gray">  ·</span>    <span class="t-gray">  ·</span>    <span class="t-gray">  ·</span>    <span class="t-gray">  ·</span>  <span class="t-green">✓ clean</span>
-
-  <span class="t-gray">─────────────────────────────────────────</span>
+  <span class="t-cyan">Repository     Branch        Mod  Unt  Push  Pull  Stash  Status</span>
+  <span class="t-gray">──────────────────────────────────────────────────────────────────</span>
+  my-web-app     <span class="t-yellow">main</span>            <span class="t-red">  3</span>  <span class="t-yellow">  1</span>  <span class="t-magenta">   2</span>  <span class="t-gray">   ·</span>  <span class="t-gray">    ·</span>  <span class="t-red">● Uncommitted</span>
+  api-server     <span class="t-yellow">feat/auth</span>       <span class="t-gray">  ·</span>  <span class="t-gray">  ·</span>  <span class="t-magenta">   5</span>  <span class="t-gray">   ·</span>  <span class="t-gray">    ·</span>  <span class="t-magenta">▲ Unpushed</span>
+  docs-site      <span class="t-green">main</span>            <span class="t-gray">  ·</span>  <span class="t-gray">  ·</span>  <span class="t-gray">   ·</span>  <span class="t-gray">   ·</span>  <span class="t-yellow">    1</span>  <span class="t-yellow">◌ Stash only</span>
+  utils-lib      <span class="t-green">main</span>            <span class="t-gray">  ·</span>  <span class="t-gray">  ·</span>  <span class="t-gray">   ·</span>  <span class="t-gray">   ·</span>  <span class="t-gray">    ·</span>  <span class="t-green">✓ clean</span>
+  <span class="t-gray">──────────────────────────────────────────────────────────────────</span>
   <span class="t-white">Total: 4</span>  │  <span class="t-red">Dirty: 3</span>  │  <span class="t-green">Clean: 1</span>  │  <span class="t-cyan">Time: 1.4s</span>
 
   <span class="t-gray">git status --all v2.0.1 · Built with ❤️ by AshV</span></pre>
@@ -241,7 +257,7 @@
         </div>
     </section>
 
-    <!-- Platform Download Section (Clean Platform Switcher) -->
+    <!-- Platform Download Section (Clean Responsive Platform Switcher) -->
     <section id="downloads" class="section">
         <div class="container">
             <div class="section-header">
@@ -258,7 +274,8 @@
                             <polyline points="4 17 10 11 4 5"></polyline>
                             <line x1="12" y1="19" x2="20" y2="19"></line>
                         </svg>
-                        PowerShell <span class="tab-badge">Recommended</span>
+                        <span>PowerShell</span>
+                        <span class="tab-badge">Recommended</span>
                     </button>
                     <button class="platform-tab-btn" onclick="switchPlatform('panel-mac', this)" role="tab" id="tab-mac">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -266,19 +283,19 @@
                             <line x1="8" y1="21" x2="16" y2="21"></line>
                             <line x1="12" y1="17" x2="12" y2="21"></line>
                         </svg>
-                        macOS Finder
+                        <span>macOS Finder</span>
                     </button>
                     <button class="platform-tab-btn" onclick="switchPlatform('panel-bash', this)" role="tab" id="tab-bash">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M4 17l6-6-6-6M12 19h8"></path>
                         </svg>
-                        Linux &amp; Bash
+                        <span>Linux &amp; Bash</span>
                     </button>
                     <button class="platform-tab-btn" onclick="switchPlatform('panel-bat', this)" role="tab" id="tab-bat">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="3" width="18" height="18" rx="2"></rect>
                         </svg>
-                        Windows CMD
+                        <span>Windows CMD</span>
                     </button>
                 </div>
 
@@ -291,30 +308,31 @@
                             <ul class="platform-bullets">
                                 <li>
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    High-performance recursive discovery on Windows filesystems
+                                    <span>High-performance recursive discovery on Windows filesystems</span>
                                 </li>
                                 <li>
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    Native ANSI color output and semantic status indicators
+                                    <span>Native ANSI color output and semantic status indicators</span>
                                 </li>
                                 <li>
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    Direct export to CSV, JSON, and GitHub-flavored Markdown
+                                    <span>Direct export to CSV, JSON, and GitHub-flavored Markdown</span>
                                 </li>
                             </ul>
-                            <a href="https://github.com/AshV/git-status-all/raw/main/git-status-all.ps1" download="git-status-all.ps1" class="btn btn-primary" id="btn-dl-ps">
-                                Download git-status-all.ps1
+                            <a href="https://github.com/AshV/git-status-all/raw/main/git-status-all.ps1" download="git-status-all.ps1" class="btn btn-primary btn-platform-download" id="btn-dl-ps">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                <span>Download git-status-all.ps1</span>
                             </a>
                         </div>
                         <div class="platform-action-box">
                             <span class="action-label">Quick Download via PowerShell</span>
                             <div class="code-copy-box">
-                                <code>irm https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.ps1 -OutFile git-status-all.ps1</code>
+                                <code title="irm https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.ps1 -OutFile git-status-all.ps1">irm https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.ps1 -OutFile git-status-all.ps1</code>
                                 <button class="copy-btn" onclick="copyCommand('irm https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.ps1 -OutFile git-status-all.ps1', this)">Copy</button>
                             </div>
                             <span class="action-label">Run Directly</span>
                             <div class="code-copy-box">
-                                <code>.\git-status-all.ps1 -Path "D:\Projects" -Dirty</code>
+                                <code title=".\git-status-all.ps1 -Path &quot;D:\Projects&quot; -Dirty">.\git-status-all.ps1 -Path "D:\Projects" -Dirty</code>
                                 <button class="copy-btn" onclick="copyCommand('.\\git-status-all.ps1 -Path &quot;D:\\Projects&quot; -Dirty', this)">Copy</button>
                             </div>
                         </div>
@@ -330,30 +348,31 @@
                             <ul class="platform-bullets">
                                 <li>
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    Double-click directly from Finder to scan that folder
+                                    <span>Double-click directly from Finder to scan that folder</span>
                                 </li>
                                 <li>
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    Automatically launches Terminal.app and sets proper directory context
+                                    <span>Automatically launches Terminal.app and sets directory context</span>
                                 </li>
                                 <li>
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    Zero dependencies — uses system Bash and Git
+                                    <span>Zero dependencies — uses system Bash and Git</span>
                                 </li>
                             </ul>
-                            <a href="https://github.com/AshV/git-status-all/raw/main/git-status-all.command" download="git-status-all.command" class="btn btn-primary" id="btn-dl-mac">
-                                Download git-status-all.command
+                            <a href="https://github.com/AshV/git-status-all/raw/main/git-status-all.command" download="git-status-all.command" class="btn btn-primary btn-platform-download" id="btn-dl-mac">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                <span>Download git-status-all.command</span>
                             </a>
                         </div>
                         <div class="platform-action-box">
                             <span class="action-label">Quick Download via Terminal</span>
                             <div class="code-copy-box">
-                                <code>curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.command && chmod +x git-status-all.command</code>
-                                <button class="copy-btn" onclick="copyCommand('curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.command && chmod +x git-status-all.command', this)">Copy</button>
+                                <code title="curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.command &amp;&amp; chmod +x git-status-all.command">curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.command &amp;&amp; chmod +x git-status-all.command</code>
+                                <button class="copy-btn" onclick="copyCommand('curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.command &amp;&amp; chmod +x git-status-all.command', this)">Copy</button>
                             </div>
                             <span class="action-label">Run in Terminal</span>
                             <div class="code-copy-box">
-                                <code>./git-status-all.command ~/Projects -d</code>
+                                <code title="./git-status-all.command ~/Projects -d">./git-status-all.command ~/Projects -d</code>
                                 <button class="copy-btn" onclick="copyCommand('./git-status-all.command ~/Projects -d', this)">Copy</button>
                             </div>
                         </div>
@@ -369,30 +388,31 @@
                             <ul class="platform-bullets">
                                 <li>
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    POSIX-compatible Bash script tailored for servers and CI/CD
+                                    <span>POSIX-compatible Bash script tailored for servers and CI/CD</span>
                                 </li>
                                 <li>
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    Colorized tabular output with pipe and redirect support
+                                    <span>Colorized tabular output with pipe and redirect support</span>
                                 </li>
                                 <li>
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    Export report to CSV, Markdown, or JSON
+                                    <span>Export report to CSV, Markdown, or JSON</span>
                                 </li>
                             </ul>
-                            <a href="https://github.com/AshV/git-status-all/raw/main/git-status-all.sh" download="git-status-all.sh" class="btn btn-primary" id="btn-dl-bash">
-                                Download git-status-all.sh
+                            <a href="https://github.com/AshV/git-status-all/raw/main/git-status-all.sh" download="git-status-all.sh" class="btn btn-primary btn-platform-download" id="btn-dl-bash">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                <span>Download git-status-all.sh</span>
                             </a>
                         </div>
                         <div class="platform-action-box">
                             <span class="action-label">Quick Download via Curl</span>
                             <div class="code-copy-box">
-                                <code>curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.sh && chmod +x git-status-all.sh</code>
-                                <button class="copy-btn" onclick="copyCommand('curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.sh && chmod +x git-status-all.sh', this)">Copy</button>
+                                <code title="curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.sh &amp;&amp; chmod +x git-status-all.sh">curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.sh &amp;&amp; chmod +x git-status-all.sh</code>
+                                <button class="copy-btn" onclick="copyCommand('curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.sh &amp;&amp; chmod +x git-status-all.sh', this)">Copy</button>
                             </div>
                             <span class="action-label">Run in Terminal</span>
                             <div class="code-copy-box">
-                                <code>./git-status-all.sh -d ~/Projects</code>
+                                <code title="./git-status-all.sh -d ~/Projects">./git-status-all.sh -d ~/Projects</code>
                                 <button class="copy-btn" onclick="copyCommand('./git-status-all.sh -d ~/Projects', this)">Copy</button>
                             </div>
                         </div>
@@ -408,30 +428,31 @@
                             <ul class="platform-bullets">
                                 <li>
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    Polyglot script that can be launched directly from File Explorer
+                                    <span>Polyglot script that can be launched directly from File Explorer</span>
                                 </li>
                                 <li>
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    Finds Git Bash automatically to execute with full ANSI support
+                                    <span>Finds Git Bash automatically to execute with full ANSI support</span>
                                 </li>
                                 <li>
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    Seamless fallback for classic Command Prompt users
+                                    <span>Seamless fallback for classic Command Prompt users</span>
                                 </li>
                             </ul>
-                            <a href="https://github.com/AshV/git-status-all/raw/main/git-status-all.bat" download="git-status-all.bat" class="btn btn-primary" id="btn-dl-bat">
-                                Download git-status-all.bat
+                            <a href="https://github.com/AshV/git-status-all/raw/main/git-status-all.bat" download="git-status-all.bat" class="btn btn-primary btn-platform-download" id="btn-dl-bat">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                <span>Download git-status-all.bat</span>
                             </a>
                         </div>
                         <div class="platform-action-box">
                             <span class="action-label">Quick Download via Curl</span>
                             <div class="code-copy-box">
-                                <code>curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.bat</code>
+                                <code title="curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.bat">curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.bat</code>
                                 <button class="copy-btn" onclick="copyCommand('curl -fsSLO https://raw.githubusercontent.com/AshV/git-status-all/main/git-status-all.bat', this)">Copy</button>
                             </div>
                             <span class="action-label">Run in CMD</span>
                             <div class="code-copy-box">
-                                <code>git-status-all.bat -d "D:\Projects"</code>
+                                <code title="git-status-all.bat -d &quot;D:\Projects&quot;">git-status-all.bat -d "D:\Projects"</code>
                                 <button class="copy-btn" onclick="copyCommand('git-status-all.bat -d &quot;D:\\Projects&quot;', this)">Copy</button>
                             </div>
                         </div>
@@ -441,7 +462,7 @@
         </div>
     </section>
 
-    <!-- Options Reference Section -->
+    <!-- Options Reference Section (Desktop Table / Mobile Responsive Cards) -->
     <section id="options" class="section">
         <div class="container guide-container">
             <div class="section-header">
@@ -517,25 +538,33 @@
             <div class="alias-grid">
                 <!-- PowerShell Profile -->
                 <div class="alias-card">
-                    <h4>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--brand-cyan);"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
-                        PowerShell ($PROFILE)
-                    </h4>
+                    <div class="alias-card-header">
+                        <h4>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--brand-cyan);"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+                            <span>PowerShell ($PROFILE)</span>
+                        </h4>
+                        <span class="alias-badge">Windows</span>
+                    </div>
                     <p>Add to your PowerShell profile to invoke from any directory:</p>
-                    <div class="code-snippet">
-                        <code>function gsa { &amp; "C:\Tools\git-status-all.ps1" @args }</code>
+                    <div class="code-copy-box">
+                        <code title="function gsa { &amp; &quot;C:\Tools\git-status-all.ps1&quot; @args }">function gsa { &amp; "C:\Tools\git-status-all.ps1" @args }</code>
+                        <button class="copy-btn" onclick="copyCommand('function gsa { &amp; &quot;C:\\Tools\\git-status-all.ps1&quot; @args }', this)">Copy</button>
                     </div>
                 </div>
 
                 <!-- Bash / Zsh Profile -->
                 <div class="alias-card">
-                    <h4>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--brand-mint);"><path d="M4 17l6-6-6-6M12 19h8"></path></svg>
-                        Bash &amp; Zsh (.bashrc / .zshrc)
-                    </h4>
+                    <div class="alias-card-header">
+                        <h4>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--brand-mint);"><path d="M4 17l6-6-6-6M12 19h8"></path></svg>
+                            <span>Bash &amp; Zsh (.bashrc / .zshrc)</span>
+                        </h4>
+                        <span class="alias-badge">macOS / Linux</span>
+                    </div>
                     <p>Add to <code>~/.bashrc</code> or <code>~/.zshrc</code> on macOS/Linux:</p>
-                    <div class="code-snippet">
-                        <code>alias gsa='/usr/local/bin/git-status-all.sh'</code>
+                    <div class="code-copy-box">
+                        <code title="alias gsa='/usr/local/bin/git-status-all.sh'">alias gsa='/usr/local/bin/git-status-all.sh'</code>
+                        <button class="copy-btn" onclick="copyCommand('alias gsa=\'/usr/local/bin/git-status-all.sh\'', this)">Copy</button>
                     </div>
                 </div>
             </div>
